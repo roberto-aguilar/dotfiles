@@ -20,7 +20,7 @@ ZSH_THEME="dojogeekra"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(composer git laravel5 npm sublime sudo virtualenvwrapper)
+plugins=(composer git laravel5 npm rvm sublime sudo virtualenvwrapper)
 
 source $ZSH/oh-my-zsh.sh
 
