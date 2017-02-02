@@ -40,6 +40,9 @@ alias u="vendor/bin/phpunit"
 
 # Third party software
 
+# File executed before the python's repl runs.
+export PYTHONSTARTUP=$HOME/.pythonrc
+
 # python's virtualenvwrapper
 source /usr/local/bin/virtualenvwrapper.sh
 
