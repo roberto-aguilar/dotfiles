@@ -14,6 +14,7 @@
     // specific settings file, for example, "Preferences (Linux).sublime-settings".
     // Because of this, setting them here will have no effect: you must set them
     // in your User File Preferences.
+    "font_face": "OperatorMono-Book",
     "font_size": 16,
 
     // If enabled, will highlight any line with a caret
