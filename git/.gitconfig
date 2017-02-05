@@ -15,7 +15,9 @@
 [core]
     editor = vim
     ignorecase = false
+    excludesfile = ~/.gitignore_global
 [push]
     default = current
 [commit]
     template = ~/.git-commit-message
+
