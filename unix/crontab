@@ -1,0 +1,15 @@
+# Update homebrew weekly to the latest version
+@weekly /usr/local/bin/brew update >> /dev/null 2>&1
+
+# Update composer weekly to the latest version
+@weekly /usr/local/bin/composer self-update >> /dev/null 2>&1
+
+# Update npm weekly to the latest version
+@weekly /usr/local/bin/npm install --global npm@latest >> /dev/null 2>&1
+
+# Update yarn weekly to the latest version
+@weekly /usr/local/bin/npm install --global yarn@latest >> /dev/null 2>&1
+
+# Update pip weekly to the latest version
+@weekly /usr/local/bin/pip install --upgrade pip >> /dev/null 2>&1
+
