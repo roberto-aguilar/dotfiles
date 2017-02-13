@@ -60,5 +60,14 @@
     "theme": "Material-Theme.sublime-theme",
 
     // Display file encoding in the status bar
-    "show_encoding": true
+    "show_encoding": true,
+
+    // Exiting the application with hot_exit enabled will cause it to close
+    // immediately without prompting. Unsaved modifications and open files will
+    // be preserved and restored when next starting.
+    //
+    // Closing a window with an associated project will also close the window
+    // without prompting, preserving unsaved changes in the workspace file
+    // alongside the project.
+    "hot_exit": false,
 }
