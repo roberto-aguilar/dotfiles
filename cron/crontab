@@ -12,4 +12,3 @@
 
 # Update pip weekly to the latest version
 @weekly /usr/local/bin/pip install --upgrade pip >> /dev/null 2>&1
-

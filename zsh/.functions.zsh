@@ -42,4 +42,3 @@ function hs() {
 function tmp() {
     cd $(mktemp -d)
 }
-

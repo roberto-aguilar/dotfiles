@@ -22,4 +22,3 @@ for file in ~/.{aliases,functions,third-party}.zsh; do
     [ -r "$file" ] && source "$file"
 done
 unset file
-

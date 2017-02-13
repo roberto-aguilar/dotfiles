@@ -6,4 +6,3 @@ source /usr/local/bin/virtualenvwrapper.sh
 
 # Z command
 source ~/Bin/z.sh
-

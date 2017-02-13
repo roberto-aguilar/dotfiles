@@ -9,4 +9,3 @@ alias dal="composer dumpautoload"
 
 # Handy alias to run phpunit
 alias t="vendor/bin/phpunit"
-

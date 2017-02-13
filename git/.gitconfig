@@ -20,4 +20,3 @@
     default = current
 [commit]
     template = ~/.git-commit-message
-
