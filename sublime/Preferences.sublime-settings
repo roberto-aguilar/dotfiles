@@ -57,5 +57,8 @@
     "color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
 
     // The theme controls the look of Sublime Text's UI (buttons, tabs, scroll bars, etc)
-    "theme": "Material-Theme.sublime-theme"
+    "theme": "Material-Theme.sublime-theme",
+
+    // Display file encoding in the status bar
+    "show_encoding": true
 }
