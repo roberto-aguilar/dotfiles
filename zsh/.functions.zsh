@@ -38,3 +38,8 @@ function hs() {
     ( cd ~/Homestead && vagrant $* )
 }
 
+# Creates a temporary directory and cd into it
+function tmp() {
+    cd $(mktemp -d)
+}
+
