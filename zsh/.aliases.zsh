@@ -8,5 +8,5 @@ alias nuke="rm -rf"
 alias dal="composer dumpautoload"
 
 # Handy alias to run phpunit
-alias u="vendor/bin/phpunit"
+alias t="vendor/bin/phpunit"
 
