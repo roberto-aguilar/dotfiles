@@ -8,6 +8,7 @@
     co = checkout
     cm = commit -v
     fetch = fetch -p
+    nuke = ! git reset --hard && git clean -df
     history = log --graph --oneline --decorate
     unstage = reset HEAD --
     untracked = ls-files --others --exclude-standard
