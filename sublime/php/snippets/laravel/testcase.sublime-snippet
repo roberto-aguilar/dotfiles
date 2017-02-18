@@ -1,0 +1,21 @@
+<snippet>
+    <content><![CDATA[
+namespace Tests\\${1:Unit};
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+
+class ${2:Example}Test extends TestCase
+{
+    /** @test */
+    public function ${3:it_}()
+    {
+        ${4:\$this->};
+    }
+}
+]]></content>
+    <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+    <tabTrigger>testcase</tabTrigger>
+    <!-- Optional: Set a scope to limit where the snippet will trigger -->
+    <scope>source.php</scope>
+</snippet>
