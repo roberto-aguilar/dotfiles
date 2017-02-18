@@ -12,7 +12,7 @@ export PATH=$PATH:$COMPOSER_PATH:$RVM_PATH
 ZSH_THEME="dojogeekra"
 
 # Oh-my-zsh plugins enabled
-plugins=(composer git laravel5 npm rvm sublime sudo virtualenvwrapper)
+plugins=(brew composer git laravel5 npm rvm sublime sudo virtualenvwrapper)
 
 # Initialize oh-my-zsh
 source $ZSH/oh-my-zsh.sh
