@@ -1,78 +1,23 @@
 {
-    // Show folders in the side bar in bold
     "bold_folder_labels": true,
-
-    // Set to "none" to turn off drawing white space, "selection" to draw only the
-    // white space within the selection, and "all" to draw all white space
     "draw_white_space": "all",
-
-    // Set to true to ensure the last line of the file ends in a newline
-    // character when saving
     "ensure_newline_at_eof_on_save": true,
-
-    // Note that the font_face and font_size are overridden in the platform
-    // specific settings file, for example, "Preferences (Linux).sublime-settings".
-    // Because of this, setting them here will have no effect: you must set them
-    // in your User File Preferences.
     "font_face": "OperatorMono-Book",
     "font_size": 16,
-
-    // If enabled, will highlight any line with a caret
     "highlight_line": true,
-
-    // List any packages to ignore here. When removing entries from this list,
-    // a restart may be required if the package contains plugins.
     "ignored_packages": ["Vintage"],
-
-    // Additional spacing at the bottom of each line, in pixels
     "line_padding_top": 8,
-
-    // Additional spacing at the top of each line, in pixels
     "line_padding_bottom": 8,
-
-    // Columns in which to display vertical rulers
     "rulers": [79],
-
-    // Set to false to disable scrolling past the end of the buffer.
-    // On OS X, this value is overridden in the platform specific settings, so
-    // you'll need to place this line in your user settings to override it.
     "scroll_past_end": true,
-
-    // When enabled, hovering over a word will show a popup listing all
-    // possible locations for the definition symbol. Requires index_files.
     "show_definitions": false,
-
-    // Set to true to insert spaces when tab is pressed
     "translate_tabs_to_spaces": true,
-
-    // Set to true to removing trailing white space on save
     "trim_trailing_white_space_on_save": true,
-
-    // Disables horizontal scrolling if enabled.
-    // May be set to true, false, or "auto", where it will be disabled for
-    // source code, and otherwise enabled.
     "word_wrap": "false",
-
-    // Sets the colors used within the text area
     "color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
-
-    // The theme controls the look of Sublime Text's UI (buttons, tabs, scroll bars, etc)
     "theme": "Material-Theme.sublime-theme",
-
-    // Display file encoding in the status bar
     "show_encoding": true,
-
-    // Exiting the application with hot_exit enabled will cause it to close
-    // immediately without prompting. Unsaved modifications and open files will
-    // be preserved and restored when next starting.
-    //
-    // Closing a window with an associated project will also close the window
-    // without prompting, preserving unsaved changes in the workspace file
-    // alongside the project.
     "hot_exit": false,
-
-    // folder_exclude_patterns control which directories are listed in folders
-    // on the side bar. These can also be set on a per-project basis.
     "folder_exclude_patterns": [
         ".git",
         ".idea",
