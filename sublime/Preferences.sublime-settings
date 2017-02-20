@@ -1,27 +1,34 @@
 {
-    "bold_folder_labels": true,
-    "draw_white_space": "all",
-    "ensure_newline_at_eof_on_save": true,
-    "font_face": "OperatorMono-Book",
-    "font_size": 16,
-    "highlight_line": true,
-    "ignored_packages": ["Vintage"],
-    "line_padding_top": 8,
-    "line_padding_bottom": 8,
-    "rulers": [79],
-    "scroll_past_end": true,
-    "show_definitions": false,
-    "translate_tabs_to_spaces": true,
-    "trim_trailing_white_space_on_save": true,
-    "word_wrap": "false",
-    "color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
-    "theme": "Material-Theme.sublime-theme",
-    "show_encoding": true,
-    "hot_exit": false,
-    "folder_exclude_patterns": [
-        ".git",
-        ".idea",
-        "__pycache__",
-        ".sass-cache"
-    ]
+	"bold_folder_labels": true,
+	"color_scheme": "Packages/Material Theme/schemes/Material-Theme.tmTheme",
+	"draw_white_space": "all",
+	"ensure_newline_at_eof_on_save": true,
+	"folder_exclude_patterns":
+	[
+		".git",
+		".idea",
+		"__pycache__",
+		".sass-cache"
+	],
+	"font_face": "OperatorMono-Book",
+	"font_size": 16,
+	"highlight_line": true,
+	"hot_exit": false,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"line_padding_bottom": 8,
+	"line_padding_top": 8,
+	"rulers":
+	[
+		79
+	],
+	"scroll_past_end": true,
+	"show_definitions": false,
+	"show_encoding": true,
+	"theme": "Material-Theme.sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"trim_trailing_white_space_on_save": true,
+	"word_wrap": "false"
 }
