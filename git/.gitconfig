@@ -9,7 +9,7 @@
     cm = commit -v
     br = branch
     fetch = fetch -p
-    branches = branch
+    branches = branch -r
     remotes = remote -v
     nuke = ! git reset --hard && git clean -df
     history = log --graph --oneline --decorate
