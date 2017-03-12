@@ -6,3 +6,7 @@
 
 # Vim swap files
 *.swp
+
+# PHP PSR-2 fixer cache file
+.php_cs.cache
+
