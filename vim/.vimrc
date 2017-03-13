@@ -1,3 +1,9 @@
+" Disable compatibility mode.
+set nocompatible
+
+" Load Vundle plugin manager
+so ~/.vim/plugins.vim
+
 " Reload the .vimrc file each time is saved.
 augroup autosourcing
     autocmd!
@@ -61,4 +67,7 @@ set splitbelow
 
 " Place vertical splits to the right.
 set splitright
+
+" Setup a keymap to toggle NERDTree
+nmap <Leader>1 :NERDTreeToggle<cr>
 
