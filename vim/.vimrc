@@ -56,3 +56,9 @@ set nowrap
 " Turn off the highlight in search ocurrences.
 nmap <Leader><space> :nohlsearch<cr>
 
+" Place horizontal splits below.
+set splitbelow
+
+" Place vertical splits to the right.
+set splitright
+
