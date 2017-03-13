@@ -1,57 +1,58 @@
-" Override default <Leader> character
-let mapleader = ','
-
-" Show the line and column number of the cursor position
-set ruler
-
-" Sane text files
-set fileformat=unix
-set encoding=utf-8
-
-" Sane tabs
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
-
-" Convert all typed tabs to spaces
-set expandtab
-
-" Display line numbers
-set number
-
-" Enable syntax highlight
-syntax enable
-
-" Enable auto indenting
-set autoindent
-set smartindent
-
-" Highligth search ocurrences
-set hlsearch
-
-" Enable incremental search hightlight
-set incsearch
-
-" Setup theme
-colorscheme desert
-
-" Make backspace behave like any other editor
-set backspace=indent,eol,start
-
-" Keep more context when scrolling off the end of a buffer
-set scrolloff=4
-
-" Avoid line wrapping
-set nowrap
-
-" Turn off the highlight in search ocurrences
-nmap <Leader><space> :nohlsearch<cr>
-
-" |---Automatic commands---|
-
-" Reload the .vimrc file each time is saved
+" Reload the .vimrc file each time is saved.
 augroup autosourcing
     autocmd!
     autocmd BufWritePost .vimrc source %
 augroup END
+
+" Define the <Leader> character.
+let mapleader = ','
+
+" Show the line and column number of the cursor position.
+set ruler
+
+" Define the file format.
+set fileformat=unix
+
+" Set the character encoding.
+set encoding=utf-8
+
+" Insert spaces when the <Tab> key is pressed.
+set expandtab
+
+" Define the number of <Space> that a <Tab> in the file counts for.
+set tabstop=4
+set softtabstop=4
+
+" Define the number of <Space> that the reindent operators (<< and >>) will indent.
+set shiftwidth=4
+
+" Display line numbers.
+set number
+
+" Enable syntax highlight.
+syntax enable
+
+" Copy indent from current line when starting a new line.
+set autoindent
+
+" Enable smart autoindenting when starting a new line.
+set smartindent
+
+" Highligth search pattern matches.
+set hlsearch
+
+" Show matches as the search pattern is being typed.
+set incsearch
+
+" Define the color scheme.
+colorscheme desert
+
+" Define the number of lines to keep above and below the cursor.
+set scrolloff=4
+
+" Avoid line wrapping.
+set nowrap
+
+" Turn off the highlight in search ocurrences.
+nmap <Leader><space> :nohlsearch<cr>
 
