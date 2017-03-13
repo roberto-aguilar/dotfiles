@@ -45,7 +45,7 @@ set hlsearch
 set incsearch
 
 " Define the color scheme.
-colorscheme desert
+colorscheme tomorrow-night
 
 " Define the number of lines to keep above and below the cursor.
 set scrolloff=4
