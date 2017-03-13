@@ -1,4 +1,4 @@
-" Disable compatibility mode.
+" Disable compatibility mode to use the latest vim features.
 set nocompatible
 
 " Load Vundle plugin manager
@@ -68,6 +68,10 @@ set splitbelow
 " Place vertical splits to the right.
 set splitright
 
-" Setup a keymap to toggle NERDTree
+" Display spaces, tabs and trailing spaces.
+set list
+set listchars=tab:!·,space:⋅,trail:⋅
+
+" Setup a keymap to toggle NERDTree.
 nmap <Leader>1 :NERDTreeToggle<cr>
 
