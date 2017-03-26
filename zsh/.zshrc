@@ -1,3 +1,6 @@
+# Set vim as the default EDITOR
+export EDITOR=vim
+
 # Escape the ^ character for commands like `git reset HEAD^`.
 setopt NO_NOMATCH
 
