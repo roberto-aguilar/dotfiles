@@ -10,3 +10,6 @@
 # PHP PSR-2 fixer cache file
 .php_cs.cache
 
+# Laravel IDE helper
+_ide_helper.php
+
