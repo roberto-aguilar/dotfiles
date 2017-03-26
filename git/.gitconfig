@@ -9,6 +9,7 @@
     cm = commit -v
     br = branch
     fetch = fetch -p
+    push = push -u
     branches = branch -r
     remotes = remote -v
     nuke = ! git reset --hard && git clean -df
