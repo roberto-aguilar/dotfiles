@@ -4,13 +4,7 @@
 import os
 
 
-# Accept both exit and quit to accommodate the programmer's obvious
-# desire to quit its interactive console. Since Python pedantically instructs
-# the programmer how to properly do what's requested, even though it obviously
-# knows what is meant (since it's displaying the error message).
-#
-# Jorge González - 2016
-#
+# Provide alternatives to exit the repl.
 class ReplExit(object):
     def __repr__(self):
         raise SystemExit
@@ -23,5 +17,6 @@ quit = ReplExit()
 class ReplClear(object):
     def __repr__(self):
         return str(os.system('clear'))
+
 
 clear = ReplClear()
