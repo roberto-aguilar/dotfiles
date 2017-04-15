@@ -13,6 +13,10 @@ augroup END
 " Define the <Leader> character.
 let mapleader = ','
 
+" Enable persistent undo
+set undofile
+set undodir=$HOME/.vim/undo
+
 " Show the line and column number of the cursor position.
 set ruler
 
