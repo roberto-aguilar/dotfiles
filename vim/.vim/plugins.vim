@@ -13,6 +13,9 @@ Plugin 'VundleVim/Vundle.vim'
 " A file system tree explorer.
 Plugin 'scrooloose/nerdtree'
 
+" Elixir programming language support
+Plugin 'elixir-lang/vim-elixir'
+
 " End Vundle settings.
 call vundle#end()
 
