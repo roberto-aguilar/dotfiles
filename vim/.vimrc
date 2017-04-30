@@ -44,6 +44,7 @@ syntax enable
 
 " Copy indent from current line when starting a new line.
 set autoindent
+set copyindent
 
 " Enable smart autoindenting when starting a new line.
 set smartindent
