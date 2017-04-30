@@ -80,3 +80,5 @@ set listchars=tab:!·,space:⋅,trail:⋅
 " Setup a keymap to toggle NERDTree.
 nmap <Leader>1 :NERDTreeToggle<cr>
 
+" Enable command-line completion
+set wildmenu
