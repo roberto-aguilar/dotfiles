@@ -17,6 +17,7 @@
     unstage = reset HEAD --
     untracked = ls-files --others --exclude-standard
     modified = ls-files --modified
+    last = diff HEAD^ HEAD
 [core]
     editor = vim
     ignorecase = false
