@@ -7,6 +7,7 @@ alias nuke="rm -rf"
 # Update the composer autoloader
 alias dal="composer dumpautoload"
 
-# Use project's phpunit executable
-alias phpunit="vendor/bin/phpunit"
+# Phpunit
+alias t="phpunit"
+alias tf="phpunit --filter ${1}"
 
