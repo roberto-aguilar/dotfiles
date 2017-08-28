@@ -21,7 +21,7 @@ plugins=(brew composer git laravel5 npm rvm sublime sudo virtualenvwrapper)
 source $ZSH/oh-my-zsh.sh
 
 # Load aliases, functions and third-party
-for file in ~/.{aliases,functions,third-party}.zsh; do
+for file in ~/.{aliases,functions,third-party,local}.zsh; do
     [ -r "$file" ] && source "$file"
 done
 unset file
