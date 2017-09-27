@@ -69,10 +69,6 @@ set splitbelow
 " Place vertical splits to the right.
 set splitright
 
-" Display spaces, tabs and trailing spaces.
-set list
-set listchars=tab:!·,space:⋅,trail:⋅
-
 " Setup a keymap to toggle NERDTree.
 nmap <Leader>1 :NERDTreeToggle<cr>
 
