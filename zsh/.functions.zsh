@@ -91,3 +91,6 @@ EOF
     open -a '/Applications/Google Chrome.app' "$github_url$option"
 }
 
+function sizeof() {
+    du -sh ${1:-$(pwd)}
+}
