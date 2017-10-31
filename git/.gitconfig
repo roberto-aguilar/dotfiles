@@ -19,6 +19,7 @@
     untracked = ls-files --others --exclude-standard
     modified = ls-files --modified
     last = diff HEAD^ HEAD
+    rm-untracked = git clean -f -d 
 [core]
     editor = vim
     ignorecase = false
