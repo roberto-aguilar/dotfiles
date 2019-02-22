@@ -7,7 +7,7 @@
     st = status
     co = checkout
     cm = commit -v
-    br = branch -vv
+    br = branch
     fetch = fetch -p
     push = push -u
     branches = branch -r
