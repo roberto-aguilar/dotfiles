@@ -1,7 +1,6 @@
 [user]
     name = Roberto Aguilar
     email = roberto.aguilar.arrieta@gmail.com
-#   signingkey = SomeRandomString
 [color]
     ui = true
 [alias]
@@ -28,7 +27,6 @@
     default = current
 [commit]
     template = ~/.git-commit-message
-    gpgsign = true
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
