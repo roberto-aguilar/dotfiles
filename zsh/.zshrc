@@ -12,7 +12,7 @@ export COMPOSER_PATH=$HOME/.composer/vendor/bin:./vendor/bin
 export PATH=$PATH:$COMPOSER_PATH:$RVM_PATH
 
 # Oh-my-zsh theme enabled
-ZSH_THEME="dojogeekra"
+ZSH_THEME="robbyrussell"
 
 # Oh-my-zsh plugins enabled
 plugins=(composer extract git laravel5 npm rvm sublime sudo virtualenvwrapper)
