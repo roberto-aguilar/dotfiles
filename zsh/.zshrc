@@ -11,7 +11,7 @@ export ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
 # Oh-my-zsh plugins enabled
-plugins=(composer extract git laravel5 npm rvm sublime sudo virtualenvwrapper)
+plugins=(extract git sublime sudo)
 
 # Initialize oh-my-zsh
 source $ZSH/oh-my-zsh.sh
