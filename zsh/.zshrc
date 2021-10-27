@@ -6,10 +6,6 @@ setopt NO_NOMATCH
 
 # PATH environment variables.
 export ZSH=$HOME/.oh-my-zsh
-export WORKON_HOME=$HOME/.virtualenvwrapper/envs
-export RVM_PATH=$HOME/.rvm/bin
-export COMPOSER_PATH=$HOME/.composer/vendor/bin:./vendor/bin
-export PATH=$PATH:$COMPOSER_PATH:$RVM_PATH
 
 # Oh-my-zsh theme enabled
 ZSH_THEME="robbyrussell"
