@@ -36,3 +36,5 @@
     prune = true
 [pager]
     branch = false
+[log]
+	date = iso-local
