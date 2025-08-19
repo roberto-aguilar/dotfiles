@@ -1,0 +1,62 @@
+#!/usr/bin/env zsh
+
+# `-e` Exit on error.
+# `-u` Trait unset variables as an error.
+# `-o pipeline` Propagate pipeline errors.
+set -euo pipefail
+
+# Install command line tools.
+xcode-select --install
+
+# Install oh-my-zsh.
+git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
+
+# Determine the dotfiles directory.
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
+# Install ZSH configuration files.
+zsh_files=(
+    .aliases.zsh
+    .functions.zsh
+    .locale.zsh
+    .third-party.zsh
+    .zshrc
+)
+for file in "${zsh_files[@]}"; do
+    ln -sf "${DOTFILES_DIRECTORY}/zsh/${file}" "${HOME}/${file}"
+done
+unset file
+unset zsh_files
+
+# Install git configuration files.
+git_files=(
+    .gitconfig
+    .git-commit-message
+    .gitignore_global
+)
+for file in "${git_files[@]}"; do
+    ln -sf "${DOTFILES_DIRECTORY}/git/${file}" "${HOME}/${file}"
+done
+unset file
+unset git_files
+
+# Install python's startup commands.
+ln -sf "${DOTFILES_DIRECTORY}/python/.pythonrc" "${HOME}/.pythonrc"
+
+# Suppress login messages.
+touch "${HOME}/.hushlogin"
+
+# Install Brew.
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+touch ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Install applications through Brew.
+brew bundle install --file="${DOTFILES_DIRECTORY}/macOS/brew/Brewfile"
+
+# Install PHP's XDebug extension.
+pecl install xdebug
+
+# Update macOS defaults.
+source "${DOTFILES_DIRECTORY}/macOS/defaults.zsh"

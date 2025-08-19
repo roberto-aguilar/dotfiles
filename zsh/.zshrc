@@ -1,23 +1,32 @@
-# Set vim as the default EDITOR
+# Set vim as the default EDITOR.
 export EDITOR=vim
 
 # Escape the ^ character for commands like `git reset HEAD^`.
 setopt NO_NOMATCH
 
-# PATH environment variables.
-export ZSH=$HOME/.oh-my-zsh
+# Path to Oh My Zsh.
+ZSH="${HOME}/.oh-my-zsh"
 
-# Oh-my-zsh theme enabled
+# Oh My Zsh theme.
 ZSH_THEME="robbyrussell"
 
-# Oh-my-zsh plugins enabled
+# Oh My Zsh plugins.
 plugins=(extract git sublime sudo)
 
-# Initialize oh-my-zsh
-source $ZSH/oh-my-zsh.sh
+# Initialize Oh My Zsh.
+source "${ZSH}/oh-my-zsh.sh"
 
-# Load aliases, functions and third-party
-for file in ~/.{aliases,local,locale,functions,third-party}.zsh; do
-    [ -r "$file" ] && source "$file"
+# Load aliases, functions, third-party, and so on.
+zsh_files=(
+  .aliases.zsh
+  .functions.zsh
+  .initialize.zsh
+  .locale.zsh
+)
+for file in "${zsh_files[@]}"; do
+    filepath="${HOME}/${file}"
+    [ -r "${filepath}" ] && source "${filepath}"
 done
+unset filepath
 unset file
+unset zsh_files
