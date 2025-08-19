@@ -1,0 +1,23 @@
+brew "composer"
+brew "fswatch"
+brew "gh"
+brew "jq"
+brew "mas"
+brew "node"
+brew "php"
+brew "tmux"
+brew "zoxide"
+
+cask "claude"
+cask "docker-desktop"
+cask "github"
+cask "jetbrains-toolbox"
+cask "ollama-app"
+cask "postman"
+cask "raycast"
+cask "spotify"
+cask "sublime-text"
+cask "tableplus"
+
+mas "Slack", id: 803453959
+mas "Todoist", id: 585829637
