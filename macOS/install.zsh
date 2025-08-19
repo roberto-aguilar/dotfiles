@@ -14,6 +14,10 @@ git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
 # Determine the dotfiles directory.
 DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
+# Install SSH related files
+ln -sf "${DOTFILES_DIRECTORY}/macOS/ssh/config" "${HOME}/.ssh/config"
+mkdir -p "${HOME}/.ssh/projects"
+
 # Install ZSH configuration files.
 zsh_files=(
     .aliases.zsh
