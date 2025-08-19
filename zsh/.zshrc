@@ -25,7 +25,7 @@ zsh_files=(
 )
 for file in "${zsh_files[@]}"; do
     filepath="${HOME}/${file}"
-    [ -r "${filepath}" ] && source "${filepath}"
+    [[ -r "${filepath}" ]] && source "${filepath}"
 done
 unset filepath
 unset file

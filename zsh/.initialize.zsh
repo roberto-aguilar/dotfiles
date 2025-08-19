@@ -1,5 +1,5 @@
 # File executed before the python's repl runs
-if [ -e "${HOME}/.pythonrc" ]; then
+if [[ -e "${HOME}/.pythonrc" ]]; then
     export PYTHONSTARTUP="${HOME}/.pythonrc"
 fi
 
