@@ -30,3 +30,22 @@ done
 unset filepath
 unset file
 unset zsh_files
+
+# Laravel Herd
+export PATH="/Users/roberto/Library/Application Support/Herd/bin/":$PATH
+
+# Herd injected PHP 8.2 configuration.
+export HERD_PHP_82_INI_SCAN_DIR="/Users/roberto/Library/Application Support/Herd/config/php/82/"
+
+# Herd injected PHP 8.4 configuration.
+export HERD_PHP_84_INI_SCAN_DIR="/Users/roberto/Library/Application Support/Herd/config/php/84/"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/roberto/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
