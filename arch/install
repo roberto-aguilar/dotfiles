@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# `-e` Exit on error.
+# `-u` Trait unset variables as an error.
+set -eu
+
+# Install Official Packages.
+applications=(
+  ollama
+  ollama-cuda
+  xdebug
+)
+for applciation in "${applications}"; do
+  sudo pacman -S --noconfirm "${application}"
+done
+unset application
+unset applications
+
+# Install AUR Packages.
+applications=(
+  jetbrains-toolbox
+  slack-desktop
+)
+for application in "${applications[@]}"; do
+  sudo yay -S --noconfirm "${application}"
+done
+unset application
+unset applications
+
+# Install Laravel devevelopment environment.
+~/.local/share/omarchy/bin/omarchy-install-dev-env laravel
+
+# Remove the need for `sudo` while installing node global packages.
+mkdir ~/.npm-packages
+npm config set prefix "${HOME}/npm-packages"
+
+# Optimize resolution for my monitors.
+sed -i \
+  -e 's/^env = GDK_SCALE,2/# &/' \
+  -e 's/^monitor=,preferred,auto,auto/# &/' \
+  -e 's/^# env = GDK_SCALE,1$/env = GDK_SCALE,1/' \
+  -e 's/^# monitor=,preferred,auto,1$/monitor=,preferred,auto,1/' \
+  ~/.config/hypr/monitors.conf
+
+# Disable IDLE locking until the `hyprlock` bug is fixed upstream.
+echo "exec-once = bash -lc 'sleep 0.5; pkill -x hypridle'" >>~/.config/hypr/autostart.conf
