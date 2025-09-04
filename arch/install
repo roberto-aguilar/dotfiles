@@ -50,3 +50,9 @@ for application in "${applications[@]}"; do
 done
 unset application
 unset applications
+
+# Install and enable Xdebug extension.
+sudo sed -i \
+  -e 's/^;zend_extension=xdebug.so/zend_extension=xdebug.so/' \
+  -e 's/^;xdebug.mode=debug/xdebug.mode=debug/' \
+  /etc/php/conf.d/xdebug.ini
