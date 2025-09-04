@@ -19,6 +19,12 @@ sed -i \
   -e 's/^# monitor=,preferred,auto,1$/monitor=,preferred,auto,1/' \
   ~/.config/hypr/monitors.conf
 
+# Allow to toggle between keyboard layouts.
+sed -i \
+  -e 's/^.*kb_layout.*/  kb_layout = us,es/' \
+  -e 's/^\(.*kb_options = compose:caps\).*/\1,grp:alts_toggle/' \
+  ~/.config/hypr/input.conf
+
 # Disable IDLE locking until the `hyprlock` bug is fixed upstream.
 echo "exec-once = bash -lc 'sleep 0.5; pkill -x hypridle'" >>~/.config/hypr/autostart.conf
 
