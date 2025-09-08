@@ -1,4 +1,4 @@
-# Get colors in manual pages
+# Get colors in manual pages.
 function man() {
     env \
     LESS_TERMCAP_mb=$(printf "\e[1;31m")    \
@@ -11,7 +11,16 @@ function man() {
     man "$@"
 }
 
-# Creates a temporary directory and cd into it
+# Creates a temporary directory and cd into it.
 function tmp() {
     cd $(mktemp -d)
+}
+
+# Handy way to open Neovim.
+n() {
+  if [[ "$#" -eq 0 ]]; then
+    nvim .
+  else
+    nvim "$@"
+  fi
 }
