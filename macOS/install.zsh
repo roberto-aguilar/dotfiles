@@ -59,6 +59,13 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Install applications through Brew.
 brew bundle install --file="${DOTFILES_DIRECTORY}/macOS/brew/Brewfile"
 
+# Install tmux configuration file.
+ln -sf "${DOTFILES_DIRECTORY}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
+
+# Install tmux plugin manager.
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+tmux source "${HOME}/.tmux.conf"
+
 # Install PHP's XDebug extension.
 pecl install xdebug
 
