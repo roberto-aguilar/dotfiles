@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # `-e` Exit on error.
 # `-u` Trait unset variables as an error.
@@ -20,26 +20,26 @@ mkdir -p "${HOME}/.ssh/projects"
 
 # Install ZSH configuration files.
 zsh_files=(
-    .aliases.zsh
-    .functions.zsh
-    .locale.zsh
-    .third-party.zsh
-    .zshrc
+  .aliases.zsh
+  .functions.zsh
+  .locale.zsh
+  .initialize.zsh
+  .zshrc
 )
 for file in "${zsh_files[@]}"; do
-    ln -sf "${DOTFILES_DIRECTORY}/zsh/${file}" "${HOME}/${file}"
+  ln -sf "${DOTFILES_DIRECTORY}/zsh/${file}" "${HOME}/${file}"
 done
 unset file
 unset zsh_files
 
 # Install git configuration files.
 git_files=(
-    .gitconfig
-    .git-commit-message
-    .gitignore_global
+  .gitconfig
+  .git-commit-message
+  .gitignore_global
 )
 for file in "${git_files[@]}"; do
-    ln -sf "${DOTFILES_DIRECTORY}/git/${file}" "${HOME}/${file}"
+  ln -sf "${DOTFILES_DIRECTORY}/git/${file}" "${HOME}/${file}"
 done
 unset file
 unset git_files
@@ -53,7 +53,7 @@ touch "${HOME}/.hushlogin"
 # Install Brew.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 touch ~/.zprofile
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Install applications through Brew.
@@ -70,4 +70,4 @@ tmux source "${HOME}/.tmux.conf"
 pecl install xdebug
 
 # Update macOS defaults.
-source "${DOTFILES_DIRECTORY}/macOS/defaults.zsh"
+source "${DOTFILES_DIRECTORY}/macOS/defaults"
