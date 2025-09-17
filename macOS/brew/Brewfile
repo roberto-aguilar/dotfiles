@@ -15,6 +15,7 @@ brew "zoxide"
 
 cask "claude"
 cask "docker-desktop"
+cask "font-caskaydia-mono-nerd-font"
 cask "github"
 cask "gpg-suite"
 cask "iterm2"
