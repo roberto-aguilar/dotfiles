@@ -21,7 +21,7 @@
     modified = ls-files --modified
     last = diff HEAD^ HEAD
 [core]
-    editor = vim
+    editor = nvim
     ignorecase = false
     excludesfile = ~/.gitignore_global
 [push]
