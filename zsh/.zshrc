@@ -21,6 +21,7 @@ zsh_files=(
   .aliases.zsh
   .functions.zsh
   .initialize.zsh
+  .local.zsh
   .locale.zsh
 )
 for file in "${zsh_files[@]}"; do
