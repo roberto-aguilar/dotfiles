@@ -56,3 +56,7 @@ sudo sed -i \
   -e 's/^;zend_extension=xdebug.so/zend_extension=xdebug.so/' \
   -e 's/^;xdebug.mode=debug/xdebug.mode=debug/' \
   /etc/php/conf.d/xdebug.ini
+
+# Install lazygit configuration file.
+mkdir -p "${HOME}/.config/lazygit"
+ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"

@@ -1,0 +1,5 @@
+git:
+  # Do not automatically fetch from remote.
+  autoFetch: false
+  # Do not automatically refresh files and submodules.
+  autoRefresh: true
