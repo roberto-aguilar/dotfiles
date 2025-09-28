@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Disable startup sound.
 sudo nvram StartupMute=%01
@@ -15,7 +15,7 @@ defaults write -g com.apple.mouse.scaling -float "1"
 
 # Enable secondary click on the right side.
 defaults write com.apple.driver.AppleBluetoothMultitouch.mouse MouseButtonMode TwoButton
-defaults write com.apple.AppleMultitouchMouse.plist MouseButtonMode TwoButton 
+defaults write com.apple.AppleMultitouchMouse.plist MouseButtonMode TwoButton
 
 # Enable smart zoom.
 defaults write com.apple.driver.AppleBluetoothMultitouch.mouse MouseOneFingerDoubleTapGesture -int 1

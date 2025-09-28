@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # `-e` Exit on error.
 # `-u` Trait unset variables as an error.
