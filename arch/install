@@ -34,7 +34,7 @@ applications=(
   ollama-cuda
   xdebug
 )
-for applciation in "${applications}"; do
+for application in "${applications[@]}"; do
   sudo pacman -S --noconfirm "${application}"
 done
 unset application
