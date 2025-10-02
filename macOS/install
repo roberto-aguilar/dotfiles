@@ -64,8 +64,8 @@ mkdir -p "${HOME}/Library/Application Support/lazygit"
 ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/Library/Application Support/lazygit/config.yml"
 
 # Remove the need for `sudo` while installing node packages globally.
-mkdir ~/.npm-packages
-npm config set prefix "${HOME}/npm-packages"
+mkdir -p "${HOME}/.npm-packages"
+npm config set prefix "${HOME}/.npm-packages"
 
 # Install tmux configuration file.
 ln -sf "${DOTFILES_DIRECTORY}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
