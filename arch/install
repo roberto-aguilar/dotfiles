@@ -51,6 +51,18 @@ done
 unset application
 unset applications
 
+# Install Web Applications
+web_applications=(
+  "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
+  "Todoist|https://app.todoist.com/app/today|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/todoist.png"
+)
+for web_application in "${web_applications[@]}"; do
+  IFS='|' read -r name url icon <<<"${web_application}"
+  omarchy-webapp-install "${name}" "${url}" "${icon}"
+done
+unset web_application
+unset web_applications
+
 # Install lazygit configuration file.
 mkdir -p "${HOME}/.config/lazygit"
 ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
