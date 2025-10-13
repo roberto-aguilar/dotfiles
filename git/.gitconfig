@@ -1,7 +1,6 @@
 [user]
     name = Roberto Aguilar
     email = roberto.aguilar.arrieta@gmail.com
-	signingkey = 6E97289C871EFFF4
 [color]
     ui = true
 [alias]
@@ -29,7 +28,11 @@
 [commit]
     template = ~/.git-commit-message
     verbose = true
-	gpgsign = true
+    gpgsign = true
+[tag]
+    gpgSign = true
+[include]
+    path = ~/.config/git/local.gitconfig
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
@@ -43,5 +46,3 @@
 	defaultBranch = main
 [log]
 	date = iso-local
-[tag]
-	gpgSign = true
