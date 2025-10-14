@@ -33,6 +33,8 @@ unset file
 unset zsh_files
 
 # Install git configuration files.
+mkdir -p "${HOME}/.config/git"
+cp "${DOTFILES_DIRECTORY}/git/local.gitconfig" "${HOME}/.config/git/local.gitconfig"
 git_files=(
   .gitconfig
   .git-commit-message

@@ -31,6 +31,8 @@
     gpgsign = true
 [tag]
     gpgSign = true
+[fetch]
+    prune = true
 [include]
     path = ~/.config/git/local.gitconfig
 [filter "lfs"]
@@ -38,10 +40,6 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
-[fetch]
-    prune = true
-[pager]
-    branch = false
 [init]
 	defaultBranch = main
 [log]
