@@ -23,6 +23,8 @@
     editor = nvim
     ignorecase = false
     excludesfile = ~/.gitignore_global
+[pager]
+    branch = false
 [push]
     default = current
 [commit]
