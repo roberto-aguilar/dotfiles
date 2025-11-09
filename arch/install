@@ -38,7 +38,7 @@ applications=(
   xdebug
 )
 for application in "${applications[@]}"; do
-  sudo pacman -S --noconfirm "${application}"
+  sudo pacman -S --noconfirm --needed "${application}"
 done
 unset application
 unset applications
@@ -49,7 +49,7 @@ applications=(
   slack-desktop
 )
 for application in "${applications[@]}"; do
-  sudo yay -S --noconfirm "${application}"
+  sudo yay -S --noconfirm --needed "${application}"
 done
 unset application
 unset applications
