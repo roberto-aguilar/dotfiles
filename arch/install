@@ -35,6 +35,7 @@ echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
 applications=(
   ollama
   ollama-cuda
+  tmux
 )
 for application in "${applications[@]}"; do
   sudo pacman -S --noconfirm --needed "${application}"
@@ -68,3 +69,10 @@ unset web_applications
 # Install lazygit configuration file.
 mkdir -p "${HOME}/.config/lazygit"
 ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
+
+# Install tmux configuration file.
+ln -sf "${DOTFILES_DIRECTORY}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
+
+# Install tmux plugin manager.
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+tmux source "${HOME}/.tmux.conf"
