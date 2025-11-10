@@ -35,7 +35,6 @@ echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
 applications=(
   ollama
   ollama-cuda
-  xdebug
 )
 for application in "${applications[@]}"; do
   sudo pacman -S --noconfirm --needed "${application}"
