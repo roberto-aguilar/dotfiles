@@ -4,6 +4,9 @@
 # `-u` Trait unset variables as an error.
 set -eu
 
+# Determine the dotfiles directory.
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
 # Install Laravel devevelopment environment.
 ~/.local/share/omarchy/bin/omarchy-install-dev-env laravel
 
