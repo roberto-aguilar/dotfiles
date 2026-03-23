@@ -34,16 +34,6 @@ echo "exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggl
 # Disable hardware rendered cursors to preven visual artifacts.
 echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
 
-# Install Official Packages.
-applications=(
-  tmux
-)
-for application in "${applications[@]}"; do
-  sudo pacman -S --noconfirm --needed "${application}"
-done
-unset application
-unset applications
-
 # Install AUR Packages.
 applications=(
   jetbrains-toolbox
