@@ -29,7 +29,7 @@ sed -i \
   "${HOME}/.config/hypr/input.conf"
 
 # Disable IDLE locking until the `hyprlock` bug is fixed upstream.
-echo "exec-once = bash -lc 'sleep 0.5; pkill -x hypridle'" >>"${HOME}/.config/hypr/autostart.conf"
+echo "exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle" >>"${HOME}/.config/hypr/autostart.conf"
 
 # Disable hardware rendered cursors to preven visual artifacts.
 echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
