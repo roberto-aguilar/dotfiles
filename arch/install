@@ -36,8 +36,6 @@ echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
 
 # Install Official Packages.
 applications=(
-  ollama
-  ollama-cuda
   tmux
 )
 for application in "${applications[@]}"; do
@@ -49,6 +47,7 @@ unset applications
 # Install AUR Packages.
 applications=(
   jetbrains-toolbox
+  lmstudio-bin
   slack-desktop
 )
 for application in "${applications[@]}"; do
