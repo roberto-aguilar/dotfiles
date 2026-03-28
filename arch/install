@@ -10,10 +10,6 @@ DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 # Install Laravel devevelopment environment.
 ~/.local/share/omarchy/bin/omarchy-install-dev-env laravel
 
-# Remove the need for `sudo` while installing node packages globally.
-mkdir ~/.npm-packages
-npm config set prefix "${HOME}/npm-packages"
-
 # Optimize resolution for my monitors.
 sed -i \
   -e 's/^env = GDK_SCALE,2/# &/' \
