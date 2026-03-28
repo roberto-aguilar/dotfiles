@@ -33,10 +33,12 @@ if ! jq -e '."modules-right" | index("hyprland/language")' "${WAYBAR_CONFIG}" >/
 fi
 
 # Disable IDLE locking until the `hyprlock` bug is fixed upstream.
-echo "exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle" >>"${HOME}/.config/hypr/autostart.conf"
+LINE="exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle"
+grep -qF "$LINE" "${HOME}/.config/hypr/autostart.conf" 2>/dev/null || echo "$LINE" >>"${HOME}/.config/hypr/autostart.conf"
 
 # Disable hardware rendered cursors to preven visual artifacts.
-echo "env = WLR_NO_HARDWARE_CURSORS,1" >>"${HOME}/.config/hypr/envs.conf"
+LINE="env = WLR_NO_HARDWARE_CURSORS,1"
+grep -qF "$LINE" "${HOME}/.config/hypr/envs.conf" 2>/dev/null || echo "$LINE" >>"${HOME}/.config/hypr/envs.conf"
 
 # Install AUR Packages.
 applications=(
