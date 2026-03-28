@@ -28,6 +28,14 @@ sed -i \
   -e 's/^\(.*kb_options = compose:caps\).*/\1,grp:alts_toggle/' \
   "${HOME}/.config/hypr/input.conf"
 
+# Show the active keyboard layout in waybar.
+WAYBAR_CONFIG="${HOME}/.config/waybar/config.jsonc"
+if ! jq -e '."modules-right" | index("hyprland/language")' "${WAYBAR_CONFIG}" >/dev/null 2>&1; then
+  jq '."modules-right" += ["hyprland/language"] | . + {"hyprland/language": {"format": "{short}"}}' \
+    "${WAYBAR_CONFIG}" >"${WAYBAR_CONFIG}.tmp" && mv "${WAYBAR_CONFIG}.tmp" "${WAYBAR_CONFIG}"
+  omarchy-restart-waybar
+fi
+
 # Disable IDLE locking until the `hyprlock` bug is fixed upstream.
 echo "exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle" >>"${HOME}/.config/hypr/autostart.conf"
 
