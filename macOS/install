@@ -47,7 +47,7 @@ unset file
 unset git_files
 
 # Install python's startup commands.
-ln -sf "${DOTFILES_DIRECTORY}/python/.pythonrc" "${HOME}/.pythonrc"
+ln -sf "${DOTFILES_DIRECTORY}/macOS/python/.pythonrc" "${HOME}/.pythonrc"
 
 # Suppress login messages.
 touch "${HOME}/.hushlogin"
