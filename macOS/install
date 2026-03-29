@@ -70,10 +70,12 @@ mkdir -p "${HOME}/.npm-packages"
 npm config set prefix "${HOME}/.npm-packages"
 
 # Install tmux configuration file.
-ln -sf "${DOTFILES_DIRECTORY}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
+ln -sf "${DOTFILES_DIRECTORY}/macOS/tmux/.tmux.conf" "${HOME}/.tmux.conf"
 
 # Install tmux plugin manager.
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
 tmux source "${HOME}/.tmux.conf"
 
 # Install NeoVim with LazyVim starter.
