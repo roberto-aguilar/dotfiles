@@ -27,7 +27,7 @@ zsh_files=(
   .zshrc
 )
 for file in "${zsh_files[@]}"; do
-  ln -sf "${DOTFILES_DIRECTORY}/zsh/${file}" "${HOME}/${file}"
+  ln -sf "${DOTFILES_DIRECTORY}/macOS/zsh/${file}" "${HOME}/${file}"
 done
 unset file
 unset zsh_files
