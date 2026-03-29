@@ -98,6 +98,13 @@ grep -qF 'lazyvim_php_lsp' "${NVIM_OPTIONS}" 2>/dev/null || echo 'vim.g.lazyvim_
 
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
-  jq '.extras |= if index("lazyvim.plugins.extras.lang.php") then . else . + ["lazyvim.plugins.extras.lang.php"] end' \
-    "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
+  jq '
+    .extras |= (
+      if index("lazyvim.plugins.extras.lang.php") then . else . + ["lazyvim.plugins.extras.lang.php"] end |
+      if index("lazyvim.plugins.extras.lang.typescript") then . else . + ["lazyvim.plugins.extras.lang.typescript"] end |
+      if index("lazyvim.plugins.extras.lang.vue") then . else . + ["lazyvim.plugins.extras.lang.vue"] end |
+      if index("lazyvim.plugins.extras.formatting.prettier") then . else . + ["lazyvim.plugins.extras.formatting.prettier"] end |
+      if index("lazyvim.plugins.extras.linting.eslint") then . else . + ["lazyvim.plugins.extras.linting.eslint"] end
+    )
+  ' "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
 fi
