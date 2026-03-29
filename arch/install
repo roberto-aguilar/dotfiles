@@ -89,10 +89,13 @@ ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/confi
 # Install stow for managing dotfile symlinks.
 sudo pacman -S --noconfirm --needed stow
 
-# Stow NeoVim configuration (hidden files, PHP LSP, etc.).
+# Stow NeoVim configuration (hidden files, etc.).
 stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
 
-# Enable LazyVim extras for NeoVim.
+# Configure NeoVim for PHP development with intelephense.
+NVIM_OPTIONS="${HOME}/.config/nvim/lua/config/options.lua"
+grep -qF 'lazyvim_php_lsp' "${NVIM_OPTIONS}" 2>/dev/null || echo 'vim.g.lazyvim_php_lsp = "intelephense"' >> "${NVIM_OPTIONS}"
+
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
   jq '.extras |= if index("lazyvim.plugins.extras.lang.php") then . else . + ["lazyvim.plugins.extras.lang.php"] end' \
