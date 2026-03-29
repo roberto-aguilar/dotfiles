@@ -14,3 +14,6 @@ alias pint="vendor/bin/pint"
 alias sail="vendor/bin/sail"
 alias format-json="pbpaste | jq --indent 2 . | pbcopy"
 alias cx="claude --allow-dangerously-skip-permissions"
+
+# Attach to tmux or start a new session.
+alias t='tmux attach || tmux new -s Work'

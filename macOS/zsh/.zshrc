@@ -1,5 +1,5 @@
-# Set vim as the default EDITOR.
-export EDITOR=vim
+# Set NeoVim as the default EDITOR.
+export EDITOR=nvim
 
 # Escape the ^ character for commands like `git reset HEAD^`.
 setopt NO_NOMATCH

@@ -63,11 +63,6 @@ npm config set prefix "${HOME}/.npm-packages"
 
 # Install tmux configuration file.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" tmux
-
-# Install tmux plugin manager.
-if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-fi
 if tmux info &>/dev/null; then
   tmux source "${HOME}/.tmux.conf"
 fi
