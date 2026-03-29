@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Handy PHP development aliases.
+alias sail="vendor/bin/sail"
