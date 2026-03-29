@@ -22,40 +22,20 @@ DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
 # Install SSH related files
 mkdir -p "${HOME}/.ssh/projects"
-ln -sf "${DOTFILES_DIRECTORY}/macOS/ssh/config" "${HOME}/.ssh/config"
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" ssh
 
 # Install ZSH configuration files.
-zsh_files=(
-  .aliases.zsh
-  .functions.zsh
-  .locale.zsh
-  .initialize.zsh
-  .zshrc
-)
-for file in "${zsh_files[@]}"; do
-  ln -sf "${DOTFILES_DIRECTORY}/macOS/zsh/${file}" "${HOME}/${file}"
-done
-unset file
-unset zsh_files
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" zsh
 
 # Install git configuration files.
 mkdir -p "${HOME}/.config/git"
 if [ ! -f "${HOME}/.config/git/local.gitconfig" ]; then
   cp "${DOTFILES_DIRECTORY}/git/local.gitconfig" "${HOME}/.config/git/local.gitconfig"
 fi
-git_files=(
-  .gitconfig
-  .git-commit-message
-  .gitignore_global
-)
-for file in "${git_files[@]}"; do
-  ln -sf "${DOTFILES_DIRECTORY}/git/${file}" "${HOME}/${file}"
-done
-unset file
-unset git_files
+stow -d "${DOTFILES_DIRECTORY}" -t "${HOME}" git
 
 # Install python's startup commands.
-ln -sf "${DOTFILES_DIRECTORY}/macOS/python/.pythonrc" "${HOME}/.pythonrc"
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" python
 
 # Suppress login messages.
 touch "${HOME}/.hushlogin"
@@ -82,7 +62,7 @@ mkdir -p "${HOME}/.npm-packages"
 npm config set prefix "${HOME}/.npm-packages"
 
 # Install tmux configuration file.
-ln -sf "${DOTFILES_DIRECTORY}/macOS/tmux/.tmux.conf" "${HOME}/.tmux.conf"
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" tmux
 
 # Install tmux plugin manager.
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
@@ -91,6 +71,9 @@ fi
 if tmux info &>/dev/null; then
   tmux source "${HOME}/.tmux.conf"
 fi
+
+# Install Vim configuration.
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" vim
 
 # Install NeoVim with LazyVim starter.
 if [ ! -d "${HOME}/.config/nvim" ]; then
