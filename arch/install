@@ -85,3 +85,6 @@ grep -qF "${ALIASES_SOURCE}" "${HOME}/.bashrc" 2>/dev/null || echo "${ALIASES_SO
 # Install lazygit configuration file.
 mkdir -p "${HOME}/.config/lazygit"
 ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
+
+# Show hidden files in NeoVim.
+stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
