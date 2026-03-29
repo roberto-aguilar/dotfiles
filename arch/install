@@ -64,6 +64,20 @@ done
 unset web_application
 unset web_applications
 
+# Enable SSH agent via systemd for passphrase caching.
+systemctl --user enable --now ssh-agent.socket
+
+# Set SSH_AUTH_SOCK for the SSH agent in Hyprland.
+LINE='env = SSH_AUTH_SOCK,$XDG_RUNTIME_DIR/ssh-agent.socket'
+grep -qF "$LINE" "${HOME}/.config/hypr/envs.conf" 2>/dev/null || echo "$LINE" >>"${HOME}/.config/hypr/envs.conf"
+
+# Auto-add SSH keys to the agent on first use.
+mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
+touch "${HOME}/.ssh/config" && chmod 600 "${HOME}/.ssh/config"
+if ! grep -q "AddKeysToAgent" "${HOME}/.ssh/config"; then
+  printf '\nHost *\n  AddKeysToAgent yes\n' >>"${HOME}/.ssh/config"
+fi
+
 # Source custom bash aliases.
 ALIASES_SOURCE="source \"${DOTFILES_DIRECTORY}/arch/bash/aliases\""
 grep -qF "${ALIASES_SOURCE}" "${HOME}/.bashrc" 2>/dev/null || echo "${ALIASES_SOURCE}" >>"${HOME}/.bashrc"
