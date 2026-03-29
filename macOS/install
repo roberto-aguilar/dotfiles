@@ -6,17 +6,23 @@
 set -euo pipefail
 
 # Install command line tools.
-xcode-select --install
+if ! xcode-select -p &>/dev/null; then
+  xcode-select --install
+  echo "Waiting for Command Line Tools installation..."
+  until xcode-select -p &>/dev/null; do sleep 5; done
+fi
 
 # Install oh-my-zsh.
-git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
+if [ ! -d "${HOME}/.oh-my-zsh" ]; then
+  git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
+fi
 
 # Determine the dotfiles directory.
 DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
 # Install SSH related files
-ln -sf "${DOTFILES_DIRECTORY}/macOS/ssh/config" "${HOME}/.ssh/config"
 mkdir -p "${HOME}/.ssh/projects"
+ln -sf "${DOTFILES_DIRECTORY}/macOS/ssh/config" "${HOME}/.ssh/config"
 
 # Install ZSH configuration files.
 zsh_files=(
@@ -34,7 +40,9 @@ unset zsh_files
 
 # Install git configuration files.
 mkdir -p "${HOME}/.config/git"
-cp "${DOTFILES_DIRECTORY}/git/local.gitconfig" "${HOME}/.config/git/local.gitconfig"
+if [ ! -f "${HOME}/.config/git/local.gitconfig" ]; then
+  cp "${DOTFILES_DIRECTORY}/git/local.gitconfig" "${HOME}/.config/git/local.gitconfig"
+fi
 git_files=(
   .gitconfig
   .git-commit-message
@@ -53,9 +61,13 @@ ln -sf "${DOTFILES_DIRECTORY}/macOS/python/.pythonrc" "${HOME}/.pythonrc"
 touch "${HOME}/.hushlogin"
 
 # Install Brew.
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+if ! command -v brew &>/dev/null; then
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
 touch ~/.zprofile
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
+grep -qF 'eval "$(/opt/homebrew/bin/brew shellenv)"' ~/.zprofile \
+  || echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Install applications through Brew.
@@ -76,7 +88,9 @@ ln -sf "${DOTFILES_DIRECTORY}/macOS/tmux/.tmux.conf" "${HOME}/.tmux.conf"
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
-tmux source "${HOME}/.tmux.conf"
+if tmux info &>/dev/null; then
+  tmux source "${HOME}/.tmux.conf"
+fi
 
 # Install NeoVim with LazyVim starter.
 if [ ! -d "${HOME}/.config/nvim" ]; then
@@ -86,7 +100,9 @@ fi
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" nvim
 
 # Install PHP's XDebug extension.
-pecl install xdebug
+if ! php -m 2>/dev/null | grep -qi xdebug; then
+  pecl install xdebug
+fi
 
 # Update macOS defaults.
 source "${DOTFILES_DIRECTORY}/macOS/defaults"
