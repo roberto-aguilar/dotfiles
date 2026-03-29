@@ -86,5 +86,15 @@ grep -qF "${ALIASES_SOURCE}" "${HOME}/.bashrc" 2>/dev/null || echo "${ALIASES_SO
 mkdir -p "${HOME}/.config/lazygit"
 ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
 
-# Show hidden files in NeoVim.
+# Install stow for managing dotfile symlinks.
+sudo pacman -S --noconfirm --needed stow
+
+# Stow NeoVim configuration (hidden files, PHP LSP, etc.).
 stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
+
+# Enable LazyVim extras for NeoVim.
+LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
+if [ -f "${LAZYVIM_JSON}" ]; then
+  jq '.extras |= if index("lazyvim.plugins.extras.lang.php") then . else . + ["lazyvim.plugins.extras.lang.php"] end' \
+    "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
+fi
