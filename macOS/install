@@ -85,6 +85,7 @@ stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" nvim
 # Configure NeoVim for PHP development with intelephense.
 NVIM_OPTIONS="${HOME}/.config/nvim/lua/config/options.lua"
 grep -qF 'lazyvim_php_lsp' "${NVIM_OPTIONS}" 2>/dev/null || echo 'vim.g.lazyvim_php_lsp = "intelephense"' >> "${NVIM_OPTIONS}"
+grep -qF 'relativenumber' "${NVIM_OPTIONS}" 2>/dev/null || echo 'vim.opt.relativenumber = false' >> "${NVIM_OPTIONS}"
 
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
