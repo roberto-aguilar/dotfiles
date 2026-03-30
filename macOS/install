@@ -91,7 +91,8 @@ if [ -f "${LAZYVIM_JSON}" ]; then
       if index("lazyvim.plugins.extras.lang.typescript") then . else . + ["lazyvim.plugins.extras.lang.typescript"] end |
       if index("lazyvim.plugins.extras.lang.vue") then . else . + ["lazyvim.plugins.extras.lang.vue"] end |
       if index("lazyvim.plugins.extras.formatting.prettier") then . else . + ["lazyvim.plugins.extras.formatting.prettier"] end |
-      if index("lazyvim.plugins.extras.linting.eslint") then . else . + ["lazyvim.plugins.extras.linting.eslint"] end
+      if index("lazyvim.plugins.extras.linting.eslint") then . else . + ["lazyvim.plugins.extras.linting.eslint"] end |
+      if index("lazyvim.plugins.extras.editor.neo-tree") then . else . + ["lazyvim.plugins.extras.editor.neo-tree"] end
     )
   ' "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
 fi
