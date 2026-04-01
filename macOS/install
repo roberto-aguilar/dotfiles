@@ -93,6 +93,6 @@ if [ -f "${LAZYVIM_JSON}" ]; then
 fi
 
 # Install PHP's XDebug extension.
-if ! php -m 2>/dev/null | grep -qi xdebug; then
+if command -v php &>/dev/null && ! php -m 2>/dev/null | grep -qi xdebug; then
   pecl install xdebug
 fi
