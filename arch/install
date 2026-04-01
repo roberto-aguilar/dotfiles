@@ -83,8 +83,7 @@ ALIASES_SOURCE="source \"${DOTFILES_DIRECTORY}/arch/bash/aliases\""
 grep -qF "${ALIASES_SOURCE}" "${HOME}/.bashrc" 2>/dev/null || echo "${ALIASES_SOURCE}" >>"${HOME}/.bashrc"
 
 # Install lazygit configuration file.
-mkdir -p "${HOME}/.config/lazygit"
-ln -sf "${DOTFILES_DIRECTORY}/lazygit/config.yml" "${HOME}/.config/lazygit/config.yml"
+stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" lazygit
 
 # Install stow for managing dotfile symlinks.
 sudo pacman -S --noconfirm --needed stow
