@@ -9,6 +9,9 @@ return {
             size = 80,
             padding = { top = 0, left = 0 },
           },
+          keys = {
+            ["<cr>"] = "jump_close",
+          },
         },
       },
     },
