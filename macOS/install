@@ -5,6 +5,12 @@
 # `-o pipeline` Propagate pipeline errors.
 set -euo pipefail
 
+# Determine the dotfiles directory.
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
+# Update macOS defaults.
+source "${DOTFILES_DIRECTORY}/macOS/defaults"
+
 # Install command line tools.
 if ! xcode-select -p &>/dev/null; then
   xcode-select --install
@@ -16,9 +22,6 @@ fi
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
   git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
 fi
-
-# Determine the dotfiles directory.
-DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
 # Install SSH related files
 mkdir -p "${HOME}/.ssh/projects"
@@ -93,6 +96,3 @@ fi
 if ! php -m 2>/dev/null | grep -qi xdebug; then
   pecl install xdebug
 fi
-
-# Update macOS defaults.
-source "${DOTFILES_DIRECTORY}/macOS/defaults"
