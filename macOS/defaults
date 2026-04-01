@@ -38,4 +38,4 @@ defaults write com.apple.dock persistent-others -array
 defaults write com.apple.dock autohide -int 1
 
 # Restart the Dock for the changes above to take effect.
-killall Dock
+killall Dock || true
