@@ -79,16 +79,14 @@ stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" nvim
 
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
-  jq '
-    .extras |= (
-      if index("lazyvim.plugins.extras.lang.php") then . else . + ["lazyvim.plugins.extras.lang.php"] end |
-      if index("lazyvim.plugins.extras.lang.typescript") then . else . + ["lazyvim.plugins.extras.lang.typescript"] end |
-      if index("lazyvim.plugins.extras.lang.vue") then . else . + ["lazyvim.plugins.extras.lang.vue"] end |
-      if index("lazyvim.plugins.extras.formatting.prettier") then . else . + ["lazyvim.plugins.extras.formatting.prettier"] end |
-      if index("lazyvim.plugins.extras.linting.eslint") then . else . + ["lazyvim.plugins.extras.linting.eslint"] end |
-      if index("lazyvim.plugins.extras.editor.neo-tree") then . else . + ["lazyvim.plugins.extras.editor.neo-tree"] end
-    )
-  ' "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
+  jq '.extras |= (. + [
+    "lazyvim.plugins.extras.lang.php",
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.lang.vue",
+    "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.linting.eslint",
+    "lazyvim.plugins.extras.editor.neo-tree"
+  ] | unique)' "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
 fi
 
 # Install PHP's XDebug extension.
