@@ -8,7 +8,9 @@ set -eu
 DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
 # Install Laravel development environment.
-~/.local/share/omarchy/bin/omarchy-install-dev-env laravel
+if [ -x "${HOME}/.local/share/omarchy/bin/omarchy-install-dev-env" ]; then
+  "${HOME}/.local/share/omarchy/bin/omarchy-install-dev-env" laravel
+fi
 
 # Optimize resolution for my monitors.
 sed -i \
