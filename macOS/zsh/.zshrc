@@ -18,6 +18,7 @@ source "${ZSH}/oh-my-zsh.sh"
 
 # Load aliases, functions, third-party, and so on.
 zsh_files=(
+  .path.zsh
   .aliases.zsh
   .functions.zsh
   .initialize.zsh
