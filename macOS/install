@@ -64,9 +64,18 @@ fi
 # Install lazygit configuration file.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" lazygit
 
-# Remove the need for `sudo` while installing node packages globally.
-mkdir -p "${HOME}/.npm-packages"
-npm config set prefix "${HOME}/.npm-packages"
+# Install global npm packages.
+npm_packages=(
+  @playwright/cli
+  intelephense
+  typescript
+  typescript-language-server
+)
+for package in "${npm_packages[@]}"; do
+  npm install -g "${package}"
+done
+unset package
+unset npm_packages
 
 # Install tmux configuration file.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" tmux
