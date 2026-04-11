@@ -1,6 +1,7 @@
 brew "bat"
 brew "composer"
 brew "fd"
+brew "ffmpeg"
 brew "fswatch"
 brew "gh"
 brew "jq"
