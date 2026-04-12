@@ -15,3 +15,6 @@ fi
 
 # mysql-client (Brewfile: mysql-client, keg-only)
 [[ -d "/opt/homebrew/opt/mysql-client/bin" ]] && export PATH="/opt/homebrew/opt/mysql-client/bin:${PATH}"
+
+# libpq (Brewfile: libpq, keg-only)
+[[ -d "/opt/homebrew/opt/libpq/bin" ]] && export PATH="/opt/homebrew/opt/libpq/bin:${PATH}"
