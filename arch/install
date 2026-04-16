@@ -53,7 +53,7 @@ applications=(
   slack-desktop
 )
 for application in "${applications[@]}"; do
-  sudo yay -S --noconfirm --needed "${application}"
+  yay -S --noconfirm --needed "${application}"
 done
 unset application
 unset applications
