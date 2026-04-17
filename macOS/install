@@ -18,6 +18,16 @@ if ! xcode-select -p &>/dev/null; then
   until xcode-select -p &>/dev/null; do sleep 5; done
 fi
 
+# Install Brew.
+if ! command -v brew &>/dev/null; then
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Install applications through Brew (provides stow, used below).
+brew bundle install --file="${DOTFILES_DIRECTORY}/macOS/brew/Brewfile"
+
 # Install oh-my-zsh.
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
   git clone https://github.com/ohmyzsh/ohmyzsh.git "${HOME}/.oh-my-zsh"
@@ -42,16 +52,6 @@ stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" python
 
 # Suppress login messages.
 touch "${HOME}/.hushlogin"
-
-# Install Brew.
-if ! command -v brew &>/dev/null; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
-
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Install applications through Brew.
-brew bundle install --file="${DOTFILES_DIRECTORY}/macOS/brew/Brewfile"
 
 # Install GitHub Copilot CLI.
 if ! command -v copilot &>/dev/null; then
