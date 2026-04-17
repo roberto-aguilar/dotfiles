@@ -70,6 +70,9 @@ done
 unset web_application
 unset web_applications
 
+# Enable SSH daemon for incoming connections.
+sudo systemctl enable --now sshd
+
 # Enable SSH agent via systemd for passphrase caching.
 systemctl --user enable --now ssh-agent.socket
 
