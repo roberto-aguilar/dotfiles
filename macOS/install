@@ -37,6 +37,13 @@ fi
 mkdir -p "${HOME}/.ssh/projects"
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" ssh
 
+# Install sshd drop-in that disables password authentication.
+SSHD_SECURITY_SOURCE="${DOTFILES_DIRECTORY}/macOS/sshd/200-security.conf"
+SSHD_SECURITY_TARGET="/etc/ssh/sshd_config.d/200-security.conf"
+if ! sudo cmp -s "${SSHD_SECURITY_SOURCE}" "${SSHD_SECURITY_TARGET}" 2>/dev/null; then
+  sudo install -o root -g wheel -m 644 "${SSHD_SECURITY_SOURCE}" "${SSHD_SECURITY_TARGET}"
+fi
+
 # Install ZSH configuration files.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" zsh
 
