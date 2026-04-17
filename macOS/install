@@ -111,6 +111,10 @@ if [ -f "${LAZYVIM_JSON}" ]; then
 fi
 
 # Install PHP's XDebug extension.
-if command -v php &>/dev/null && ! php -m 2>/dev/null | grep -qi xdebug; then
+if command -v php &>/dev/null \
+  && ! php -r 'exit(extension_loaded("xdebug") ? 0 : 1);' 2>/dev/null; then
+  # Clear any stale pecl registry entry (e.g. after a Homebrew PHP minor bump
+  # leaves xdebug.so ABI-incompatible) so `pecl install` can proceed cleanly.
+  pecl uninstall xdebug &>/dev/null || true
   pecl install xdebug
 fi
