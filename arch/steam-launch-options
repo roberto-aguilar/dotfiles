@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Set Steam launch options for all installed games."""
+
+import glob
+import os
+import sys
+
+import vdf
+
+# gamemoderun: auto-switches CPU governor to performance mode while the game runs.
+# mangohud: shows an in-game FPS/frametime overlay to monitor performance.
+# %command%: placeholder that Steam replaces with the actual game executable.
+LAUNCH_OPTIONS = "gamemoderun mangohud %command%"
+
+# Steam installs internal packages (runtimes, Proton, etc.) alongside real games.
+NON_GAME_KEYWORDS = ["runtime", "proton", "redistribut", "steamworks"]
+
+
+def find_local_configuration_path():
+    paths = glob.glob(os.path.expanduser(
+        "~/.local/share/Steam/userdata/*/config/localconfig.vdf"
+    ))
+    if not paths:
+        return None
+    return paths[0]
+
+
+def find_installed_games():
+    manifests = glob.glob(os.path.expanduser(
+        "~/.local/share/Steam/steamapps/appmanifest_*.acf"
+    ))
+    games = []
+    for manifest_path in manifests:
+        with open(manifest_path) as manifest_file:
+            manifest = vdf.load(manifest_file)
+        application_id = manifest["AppState"]["appid"]
+        name = manifest["AppState"]["name"]
+        if any(keyword in name.lower() for keyword in NON_GAME_KEYWORDS):
+            continue
+        games.append((application_id, name))
+    return games
+
+
+def main():
+    local_configuration_path = find_local_configuration_path()
+    if local_configuration_path is None:
+        print("No Steam localconfig.vdf found — skipping.")
+        return
+
+    print(f"Reading {local_configuration_path}")
+
+    games = find_installed_games()
+    if not games:
+        print("No Steam games found.")
+        return
+
+    print(f"Found {len(games)} game(s)\n")
+
+    with open(local_configuration_path) as local_configuration_file:
+        local_configuration = vdf.load(local_configuration_file)
+
+    # Steam stores per-game settings at this path inside localconfig.vdf.
+    applications = (
+        local_configuration["UserLocalConfigStore"]
+        ["Software"]["Valve"]["Steam"]["apps"]
+    )
+
+    changed = 0
+    for application_id, name in games:
+        if application_id not in applications:
+            applications[application_id] = {}
+
+        current_options = applications[application_id].get("LaunchOptions", "")
+        if current_options == LAUNCH_OPTIONS:
+            print(f"  {name}: already set")
+        elif current_options:
+            print(f"  {name}: replacing \"{current_options}\"")
+            applications[application_id]["LaunchOptions"] = LAUNCH_OPTIONS
+            changed += 1
+        else:
+            print(f"  {name}: setting launch options")
+            applications[application_id]["LaunchOptions"] = LAUNCH_OPTIONS
+            changed += 1
+
+    if changed == 0:
+        print("\nNothing to update.")
+        return
+
+    with open(local_configuration_path, "w") as local_configuration_file:
+        vdf.dump(local_configuration, local_configuration_file, pretty=True)
+
+    print(f"\nWrote {changed} update(s) to {local_configuration_path}")
+
+
+if __name__ == "__main__":
+    main()
