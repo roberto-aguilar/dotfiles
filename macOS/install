@@ -68,7 +68,10 @@ fi
 # Install lazygit configuration file.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" lazygit
 
-# Install global npm packages.
+# Manage Node.js through mise for parity with the Omarchy setup.
+mise use -g node@lts
+
+# Install global npm packages against mise's Node.
 npm_packages=(
   @playwright/cli
   intelephense
@@ -76,7 +79,7 @@ npm_packages=(
   typescript-language-server
 )
 for package in "${npm_packages[@]}"; do
-  npm install -g "${package}"
+  mise exec -- npm install -g "${package}"
 done
 unset package
 unset npm_packages
