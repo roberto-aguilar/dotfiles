@@ -104,6 +104,8 @@ stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" nvim
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
   jq '.extras |= (. + [
+    "lazyvim.plugins.extras.dap.core",
+    "lazyvim.plugins.extras.lang.dotnet",
     "lazyvim.plugins.extras.lang.php",
     "lazyvim.plugins.extras.lang.typescript",
     "lazyvim.plugins.extras.lang.vue",

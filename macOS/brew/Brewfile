@@ -20,6 +20,7 @@ brew "zoxide"
 
 cask "claude"
 cask "docker-desktop"
+cask "dotnet-sdk"
 cask "font-caskaydia-mono-nerd-font"
 cask "ghostty"
 cask "github"
