@@ -58,6 +58,9 @@ done
 unset application
 unset applications
 
+# Install the .NET SDK for C# development.
+sudo pacman -S --noconfirm --needed dotnet-sdk
+
 # Install Web Applications
 web_applications=(
   "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
@@ -181,6 +184,8 @@ sudo sysctl --system >/dev/null
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
   jq '.extras |= (. + [
+    "lazyvim.plugins.extras.dap.core",
+    "lazyvim.plugins.extras.lang.dotnet",
     "lazyvim.plugins.extras.lang.php",
     "lazyvim.plugins.extras.lang.typescript",
     "lazyvim.plugins.extras.lang.vue",
