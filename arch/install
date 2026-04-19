@@ -110,7 +110,9 @@ sudo pacman -S --noconfirm --needed gamemode lib32-gamemode mangohud lib32-mango
 
 # Gaming: Hyprland overrides for the 144Hz monitor.
 # - allow_tearing: lets games skip vsync for lower input lag (per-game, see windowrules).
-# - vrr: adaptive sync so the monitor matches the game's framerate instead of stuttering.
+# - vrr=2: adaptive sync for fullscreen apps only. vrr=1 (always on) causes DRM
+#   page-flip races on NVIDIA during compositor startup, crashing layer-shell
+#   clients like waybar.
 # - direct_scanout: disabled because multi-window games (like Doom Eternal's launcher)
 #   cause the compositor to flicker between scanout and composited mode on NVIDIA.
 LOOKNFEEL="${HOME}/.config/hypr/looknfeel.conf"
@@ -122,7 +124,7 @@ general {
 }
 
 misc {
-    vrr = 1
+    vrr = 2
 }
 
 render {
