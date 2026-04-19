@@ -112,7 +112,8 @@ if [ -f "${LAZYVIM_JSON}" ]; then
     "lazyvim.plugins.extras.lang.vue",
     "lazyvim.plugins.extras.formatting.prettier",
     "lazyvim.plugins.extras.linting.eslint",
-    "lazyvim.plugins.extras.editor.neo-tree"
+    "lazyvim.plugins.extras.editor.neo-tree",
+    "lazyvim.plugins.extras.coding.mini-surround"
   ] | unique)' "${LAZYVIM_JSON}" > "${LAZYVIM_JSON}.tmp" && mv "${LAZYVIM_JSON}.tmp" "${LAZYVIM_JSON}"
 fi
 
