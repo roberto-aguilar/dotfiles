@@ -104,6 +104,9 @@ stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" lazygit
 stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
 
 
+# Apply Bluetooth audio fixes for the onboard WiFi/BT card.
+"${DOTFILES_DIRECTORY}/arch/bluetooth-audio-rtl8821ce"
+
 # Gaming: install gamemode (auto-switches CPU to performance mode while gaming),
 # mangohud (in-game FPS/frametime overlay), and python-vdf (to edit Steam config).
 sudo pacman -S --noconfirm --needed gamemode lib32-gamemode mangohud lib32-mangohud python-vdf

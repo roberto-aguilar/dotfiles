@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Bluetooth audio quality fixes. The onboard RTL8821CE WiFi/BT combo
+# suffers from A2DP dropouts on Linux due to poor WiFi/BT coexistence;
+# these workarounds are a software patch until the card is replaced.
+
+set -eu
+
+# Provide bluetoothctl and related diagnostic tooling.
+sudo pacman -S --noconfirm --needed bluez-utils
+
+# Keep the Bluetooth radio powered continuously. A2DP sinks drop samples
+# when the radio suspends mid-stream, and power savings are irrelevant
+# on a desktop.
+if [ ! -f /etc/modprobe.d/btusb.conf ]; then
+  echo "options btusb enable_autosuspend=N" | sudo tee /etc/modprobe.d/btusb.conf >/dev/null
+fi
+
+# Unlock newer codec offload and kernel management features in bluetoothd.
+if ! grep -qE '^\s*Experimental\s*=\s*true' /etc/bluetooth/main.conf; then
+  sudo sed -i -E 's/^\s*#?\s*Experimental\s*=.*/Experimental = true/' /etc/bluetooth/main.conf
+  sudo systemctl restart bluetooth.service
+fi
+
+# Tighten PipeWire's real-time buffer for Bluetooth sinks. The default
+# negotiated quantum is coarse enough to introduce perceptible lag on
+# A2DP (noticeable as audio trailing video).
+PIPEWIRE_DROPIN="${HOME}/.config/pipewire/pipewire.conf.d/10-bluetooth-latency.conf"
+if [ ! -f "${PIPEWIRE_DROPIN}" ]; then
+  mkdir -p "$(dirname "${PIPEWIRE_DROPIN}")"
+  cat >"${PIPEWIRE_DROPIN}" <<'PIPEWIRE'
+context.properties = {
+    default.clock.min-quantum = 128
+    default.clock.quantum     = 512
+}
+PIPEWIRE
+  systemctl --user restart wireplumber pipewire-pulse pipewire 2>/dev/null || true
+fi
+
+# Exclude LDAC from available Bluetooth codecs. LDAC is too bitrate-hungry
+# for the shared 2.4 GHz radio and crackles whenever WiFi is active; modest
+# codecs like AAC handle the marginal link fine. Remove this drop-in once
+# the BT card is replaced with one that has proper coexistence.
+WIREPLUMBER_DROPIN="${HOME}/.config/wireplumber/wireplumber.conf.d/51-bluez-disable-ldac.conf"
+if [ ! -f "${WIREPLUMBER_DROPIN}" ]; then
+  mkdir -p "$(dirname "${WIREPLUMBER_DROPIN}")"
+  cat >"${WIREPLUMBER_DROPIN}" <<'WIREPLUMBER'
+monitor.bluez.properties = {
+  bluez5.codecs = [ sbc sbc_xq aac aptx aptx_hd aptx_ll faststream ]
+}
+WIREPLUMBER
+  systemctl --user restart wireplumber 2>/dev/null || true
+fi
