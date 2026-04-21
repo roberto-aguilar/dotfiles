@@ -17,6 +17,7 @@ brew "php"
 brew "ripgrep"
 brew "tmux"
 brew "tree-sitter-cli"
+brew "watch"
 brew "zoxide"
 
 cask "claude"
