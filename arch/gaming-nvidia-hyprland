@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# Gaming fixes for a workstation running the NVIDIA proprietary driver
+# on the Hyprland Wayland compositor. The combo does not game well out
+# of the box: NVIDIA needs environment coaxing to act as a first-class
+# Wayland citizen, Hyprland's safe defaults trade input latency and
+# adaptive sync for compositor stability, and the kernel's memory
+# defaults assume a small-RAM laptop that should page out aggressively.
+# Together these fixes buy low input lag, working VRR, a performance
+# CPU governor during play, and game data that stays resident in RAM.
+# All fixes are idempotent.
+
+set -eu
+
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
+# Have the CPU run at its performance governor automatically whenever a
+# game is launched (so we never ship a game running on "powersave"),
+# surface frame-rate and frame-time inside the game itself so stutter is
+# visible at a glance, and provide the VDF parser the Steam launch-options
+# script depends on.
+sudo pacman -S --noconfirm --needed gamemode lib32-gamemode mangohud lib32-mangohud python-vdf
+
+# Reshape Hyprland's presentation pipeline for gaming. Each directive is
+# written into looknfeel.conf alongside its rationale so opening that
+# file later reveals what every line is for without a trip back to this
+# installer.
+LOOKNFEEL="${HOME}/.config/hypr/looknfeel.conf"
+if [ -f "${LOOKNFEEL}" ]; then
+  grep -q 'allow_tearing' "${LOOKNFEEL}" || cat >>"${LOOKNFEEL}" <<'GAMING'
+
+# Let games opt out of compositor vsync so input lag drops to what the
+# monitor itself imposes. Per-game — see the windowrules in hyprland.conf
+# that turn this on for Steam titles.
+general {
+    allow_tearing = true
+}
+
+# Engage the monitor's adaptive refresh only while a fullscreen game owns
+# the screen. vrr = 1 (always on) causes DRM page-flip races on NVIDIA
+# during compositor startup that crash layer-shell clients like waybar.
+misc {
+    vrr = 2
+}
+
+# Keep the compositor composited rather than handing scanout straight to
+# the game. With direct scanout on, multi-window games like Doom Eternal
+# (launcher + game side-by-side) flicker between scanout and composited
+# mode on NVIDIA whenever focus moves between windows.
+render {
+    direct_scanout = false
+}
+GAMING
+fi
+
+# Per-game window rules for Steam titles. Opt Steam game windows into
+# the low-latency tear-capable presentation path enabled above. Strip
+# Omarchy's default partial transparency so games render fully opaque
+# (otherwise a HUD rendered at 0.97 alpha looks dim). Force Doom Eternal
+# to fullscreen on its own: the game opens a launcher window plus a game
+# window side-by-side and never takes fullscreen without prodding.
+HYPRLAND="${HOME}/.config/hypr/hyprland.conf"
+if [ -f "${HYPRLAND}" ]; then
+  LINE='windowrule = immediate on, match:class steam_app_'
+  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
+  LINE='windowrule = tag -default-opacity, match:class steam_app_'
+  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
+  LINE='windowrule = opacity 1.0 1.0, match:class steam_app_'
+  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
+  LINE='windowrule = fullscreen on, match:title DOOMEternal'
+  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
+fi
+
+# Environment the NVIDIA proprietary driver needs to behave correctly on
+# Wayland. Each value is written into envs.conf alongside its rationale
+# so opening that file later reveals what every line is for without a
+# trip back to this installer.
+ENVS="${HOME}/.config/hypr/envs.conf"
+if [ -f "${ENVS}" ]; then
+  grep -qF 'GBM_BACKEND' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Allocate Wayland buffers through NVIDIA's GBM instead of Mesa's.
+# Wayland compositing does not work on NVIDIA without this.
+env = GBM_BACKEND,nvidia-drm
+NVIDIA
+
+  grep -qF '__GL_GSYNC_ALLOWED' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Permit the driver to engage G-Sync with the monitor. Driver-side
+# counterpart to the compositor VRR set in looknfeel.conf.
+env = __GL_GSYNC_ALLOWED,1
+NVIDIA
+
+  grep -qF '__GL_VRR_ALLOWED' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Permit the driver to engage VRR on monitors that advertise VRR
+# instead of G-Sync (FreeSync, HDMI-VRR, etc.).
+env = __GL_VRR_ALLOWED,1
+NVIDIA
+
+  grep -qF 'OGL_DEDICATED_HW_STATE_PER_CONTEXT' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Preserve OpenGL hardware state across context switches so swapping
+# focus between GL applications does not corrupt rendering.
+env = OGL_DEDICATED_HW_STATE_PER_CONTEXT,ENABLE_ROBUST
+NVIDIA
+
+  grep -qF '__GLX_VENDOR_LIBRARY_NAME' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Force GLX clients through NVIDIA's GLX implementation rather than
+# Mesa's. Without this libglvnd may route GL apps through Mesa and
+# the NVIDIA GPU goes unused.
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+NVIDIA
+
+  grep -qF 'LIBVA_DRIVER_NAME' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Use NVIDIA's VA-API driver so hardware video decode runs on the GPU
+# instead of the CPU.
+env = LIBVA_DRIVER_NAME,nvidia
+NVIDIA
+
+  grep -qF 'NVD_BACKEND' "${ENVS}" || cat >>"${ENVS}" <<'NVIDIA'
+
+# Take the direct CUDA path through NVIDIA's VA-API driver for best
+# decode performance (alternatives fall back to EGL interop and are
+# slower).
+env = NVD_BACKEND,direct
+NVIDIA
+fi
+
+# Wire gamemode and mangohud into every installed Steam game's launch
+# command, so activation is automatic and not a per-game chore.
+"${DOTFILES_DIRECTORY}/arch/steam-launch-options"
+
+# Keep the GPU driver resident between game sessions. Without this, each
+# game launch pays the full driver initialization cost as a visible
+# startup stall on the first frame.
+sudo systemctl enable --now nvidia-persistenced
+
+# Keep game data resident in RAM rather than paged out to the SSD. The
+# kernel's default swappiness assumes a small-RAM machine that should
+# evict pages proactively; with 64 GB installed there is enough headroom
+# to hold everything in memory and avoid mid-session SSD stalls.
+sudo tee /etc/sysctl.d/99-gaming.conf >/dev/null <<'SYSCTL'
+vm.swappiness=10
+SYSCTL
+sudo sysctl --system >/dev/null

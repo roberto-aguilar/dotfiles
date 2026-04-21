@@ -107,84 +107,8 @@ stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
 # Apply Bluetooth audio fixes for the onboard WiFi/BT card.
 "${DOTFILES_DIRECTORY}/arch/bluetooth-audio-rtl8821ce"
 
-# Gaming: install gamemode (auto-switches CPU to performance mode while gaming),
-# mangohud (in-game FPS/frametime overlay), and python-vdf (to edit Steam config).
-sudo pacman -S --noconfirm --needed gamemode lib32-gamemode mangohud lib32-mangohud python-vdf
-
-# Gaming: Hyprland overrides for the 144Hz monitor.
-# - allow_tearing: lets games skip vsync for lower input lag (per-game, see windowrules).
-# - vrr=2: adaptive sync for fullscreen apps only. vrr=1 (always on) causes DRM
-#   page-flip races on NVIDIA during compositor startup, crashing layer-shell
-#   clients like waybar.
-# - direct_scanout: disabled because multi-window games (like Doom Eternal's launcher)
-#   cause the compositor to flicker between scanout and composited mode on NVIDIA.
-LOOKNFEEL="${HOME}/.config/hypr/looknfeel.conf"
-if [ -f "${LOOKNFEEL}" ]; then
-  grep -q 'allow_tearing' "${LOOKNFEEL}" || cat >>"${LOOKNFEEL}" <<'GAMING'
-
-general {
-    allow_tearing = true
-}
-
-misc {
-    vrr = 2
-}
-
-render {
-    direct_scanout = false
-}
-GAMING
-fi
-
-# Gaming: window rules for Steam games.
-# - immediate: enables tearing for lower input lag (requires allow_tearing above).
-# - tag/opacity: removes Omarchy's default 0.97 transparency so games render at full opacity.
-# - fullscreen for DOOMEternal: the game opens a launcher + game window side by side;
-#   without this rule the game never goes fullscreen on its own.
-HYPRLAND="${HOME}/.config/hypr/hyprland.conf"
-if [ -f "${HYPRLAND}" ]; then
-  LINE='windowrule = immediate on, match:class steam_app_'
-  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
-  LINE='windowrule = tag -default-opacity, match:class steam_app_'
-  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
-  LINE='windowrule = opacity 1.0 1.0, match:class steam_app_'
-  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
-  LINE='windowrule = fullscreen on, match:title DOOMEternal'
-  grep -qF "${LINE}" "${HYPRLAND}" || echo "${LINE}" >>"${HYPRLAND}"
-fi
-
-# Gaming: NVIDIA environment variables.
-# - GBM_BACKEND: required for Wayland compositing on NVIDIA.
-# - GL_GSYNC/VRR_ALLOWED: enables adaptive sync at the driver level (works with vrr above).
-# - OGL_DEDICATED_HW_STATE: prevents OpenGL state corruption across application contexts.
-# - GLX_VENDOR_LIBRARY_NAME: ensures GLX applications use the NVIDIA driver, not Mesa.
-# - LIBVA/NVD: enables hardware video decoding through the NVIDIA driver.
-ENVS="${HOME}/.config/hypr/envs.conf"
-if [ -f "${ENVS}" ]; then
-  grep -qF 'GBM_BACKEND' "${ENVS}" || echo 'env = GBM_BACKEND,nvidia-drm' >>"${ENVS}"
-  grep -qF '__GL_GSYNC_ALLOWED' "${ENVS}" || echo 'env = __GL_GSYNC_ALLOWED,1' >>"${ENVS}"
-  grep -qF '__GL_VRR_ALLOWED' "${ENVS}" || echo 'env = __GL_VRR_ALLOWED,1' >>"${ENVS}"
-  grep -qF 'OGL_DEDICATED_HW_STATE_PER_CONTEXT' "${ENVS}" || echo 'env = OGL_DEDICATED_HW_STATE_PER_CONTEXT,ENABLE_ROBUST' >>"${ENVS}"
-  grep -qF '__GLX_VENDOR_LIBRARY_NAME' "${ENVS}" || echo 'env = __GLX_VENDOR_LIBRARY_NAME,nvidia' >>"${ENVS}"
-  grep -qF 'LIBVA_DRIVER_NAME' "${ENVS}" || echo 'env = LIBVA_DRIVER_NAME,nvidia' >>"${ENVS}"
-  grep -qF 'NVD_BACKEND' "${ENVS}" || echo 'env = NVD_BACKEND,direct' >>"${ENVS}"
-fi
-
-# Gaming: set "gamemoderun mangohud %command%" as launch options for all Steam games.
-# gamemoderun auto-switches CPU governor to performance mode while a game is running.
-# mangohud shows an in-game FPS/frametime overlay to monitor performance.
-"${DOTFILES_DIRECTORY}/arch/steam-launch-options"
-
-# Gaming: keep the GPU driver loaded between game sessions so each launch doesn't
-# pay the full driver initialization cost.
-sudo systemctl enable --now nvidia-persistenced
-
-# Gaming: with 64 GB of RAM, the default swappiness of 60 is too aggressive — the kernel
-# moves game data to the SSD unnecessarily. A value of 10 keeps everything in memory.
-sudo tee /etc/sysctl.d/99-gaming.conf >/dev/null <<'SYSCTL'
-vm.swappiness=10
-SYSCTL
-sudo sysctl --system >/dev/null
+# Apply gaming fixes for this NVIDIA + Hyprland workstation.
+"${DOTFILES_DIRECTORY}/arch/gaming-nvidia-hyprland"
 
 LAZYVIM_JSON="${HOME}/.config/nvim/lazyvim.json"
 if [ -f "${LAZYVIM_JSON}" ]; then
