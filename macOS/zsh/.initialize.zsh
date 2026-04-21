@@ -18,3 +18,8 @@ if command -v az &> /dev/null; then
     autoload -Uz bashcompinit && bashcompinit
     source "$(brew --prefix)/etc/bash_completion.d/az"
 fi
+
+# Initialize `kubectl` completion if available.
+if command -v kubectl &> /dev/null; then
+    source <(kubectl completion zsh)
+fi
