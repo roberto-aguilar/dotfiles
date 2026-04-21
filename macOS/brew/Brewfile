@@ -1,3 +1,4 @@
+brew "azure-cli"
 brew "bat"
 brew "composer"
 brew "fd"
