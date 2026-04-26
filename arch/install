@@ -61,6 +61,11 @@ unset applications
 # Install the .NET SDK for C# development.
 sudo pacman -S --noconfirm --needed dotnet-sdk
 
+# Install the Circleback CLI for terminal access to meeting notes.
+if ! command -v circleback >/dev/null 2>&1; then
+  npm install -g @circleback/cli
+fi
+
 # Install Web Applications
 web_applications=(
   "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
