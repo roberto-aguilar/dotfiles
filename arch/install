@@ -66,6 +66,11 @@ if ! command -v circleback >/dev/null 2>&1; then
   npm install -g @circleback/cli
 fi
 
+# Install GitHub Copilot CLI for terminal-based agentic coding.
+if ! command -v copilot >/dev/null 2>&1; then
+  npm install -g @github/copilot
+fi
+
 # Install Web Applications
 web_applications=(
   "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
