@@ -66,10 +66,11 @@ if ! command -v circleback >/dev/null 2>&1; then
   npm install -g @circleback/cli
 fi
 
+# Install OpenAI Codex CLI so the `co` alias has a binary to call.
+omarchy-pkg-add openai-codex
+
 # Install GitHub Copilot CLI for terminal-based agentic coding.
-if ! command -v copilot >/dev/null 2>&1; then
-  npm install -g @github/copilot
-fi
+omarchy-pkg-add github-copilot-cli
 
 # Install Web Applications
 web_applications=(
