@@ -77,6 +77,9 @@ omarchy-pkg-add openai-codex
 # Install GitHub Copilot CLI for terminal-based agentic coding.
 omarchy-pkg-add github-copilot-cli
 
+# Install Google Gemini CLI for terminal-based agentic coding.
+omarchy-pkg-add gemini-cli
+
 # Install Web Applications
 web_applications=(
   "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
