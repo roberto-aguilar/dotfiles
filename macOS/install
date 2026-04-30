@@ -73,6 +73,7 @@ mise use -g node@lts
 
 # Install global npm packages against mise's Node.
 npm_packages=(
+  @circleback/cli
   @playwright/cli
   intelephense
   typescript
