@@ -105,6 +105,9 @@ fi
 ALIASES_SOURCE="source \"${DOTFILES_DIRECTORY}/arch/bash/aliases\""
 grep -qF "${ALIASES_SOURCE}" "${HOME}/.bashrc" 2>/dev/null || echo "${ALIASES_SOURCE}" >>"${HOME}/.bashrc"
 
+# Install delta for syntax-highlighted diffs with line numbers.
+sudo pacman -S --noconfirm --needed git-delta
+
 # Install stow for managing dotfile symlinks.
 sudo pacman -S --noconfirm --needed stow
 

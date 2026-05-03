@@ -1,6 +1,7 @@
 brew "azure-cli"
 brew "bat"
 brew "composer"
+brew "git-delta"
 brew "fd"
 brew "ffmpeg"
 brew "fswatch"

@@ -1,3 +1,5 @@
 git:
-  # Do not automatically fetch from remote.
   autoFetch: false
+  pagers:
+    - colorArg: always
+      pager: delta --paging=never --line-numbers --true-color=always
