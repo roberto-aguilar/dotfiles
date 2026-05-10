@@ -85,6 +85,11 @@ done
 unset package
 unset npm_packages
 
+# Install tmux plugins.
+if [ ! -d "${HOME}/.tmux/plugins/tmux-fingers" ]; then
+  git clone https://github.com/Morantron/tmux-fingers "${HOME}/.tmux/plugins/tmux-fingers"
+fi
+
 # Install tmux configuration file.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" tmux
 if tmux info &>/dev/null; then
