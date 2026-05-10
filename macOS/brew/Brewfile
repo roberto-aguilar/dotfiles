@@ -1,3 +1,5 @@
+tap "stripe/stripe-cli"
+
 brew "azure-cli"
 brew "bat"
 brew "composer"
@@ -17,6 +19,7 @@ brew "neovim"
 brew "p7zip"
 brew "php"
 brew "ripgrep"
+brew "stripe/stripe-cli/stripe"
 brew "tmux"
 brew "tree-sitter-cli"
 brew "watch"
