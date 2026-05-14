@@ -66,6 +66,11 @@ if ! command -v circleback >/dev/null 2>&1; then
   npm install -g @circleback/cli
 fi
 
+# Install Railway CLI for deploying and managing Railway services.
+if ! command -v railway >/dev/null 2>&1; then
+  bash <(curl -fsSL cli.new)
+fi
+
 # Install OpenAI Codex CLI so the `co` alias has a binary to call.
 omarchy-pkg-add openai-codex
 
