@@ -52,10 +52,6 @@ fi
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" zsh
 
 # Install git configuration files.
-mkdir -p "${HOME}/.config/git"
-if [ ! -f "${HOME}/.config/git/local.gitconfig" ]; then
-  cp "${DOTFILES_DIRECTORY}/git/local.gitconfig" "${HOME}/.config/git/local.gitconfig"
-fi
 stow -d "${DOTFILES_DIRECTORY}" -t "${HOME}" git
 
 # Install python's startup commands.

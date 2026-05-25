@@ -1,6 +1,7 @@
 [user]
     name = Roberto Aguilar
     email = roberto.aguilar.arrieta@gmail.com
+    signingkey = E19E54A71CC6CCEE
 [color]
     ui = true
 [alias]
@@ -35,8 +36,6 @@
     gpgSign = true
 [fetch]
     prune = true
-[include]
-    path = ~/.config/git/local.gitconfig
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
