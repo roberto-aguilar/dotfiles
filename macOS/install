@@ -37,6 +37,10 @@ fi
 mkdir -p "${HOME}/.ssh/projects"
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" ssh
 
+# Install GPG configuration files.
+mkdir -p "${HOME}/.gnupg"
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" gpg
+
 # Install sshd drop-in that disables password authentication.
 SSHD_SECURITY_SOURCE="${DOTFILES_DIRECTORY}/macOS/sshd/200-security.conf"
 SSHD_SECURITY_TARGET="/etc/ssh/sshd_config.d/200-security.conf"
