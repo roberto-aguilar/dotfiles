@@ -46,6 +46,5 @@ cask "spotify"
 cask "sublime-text"
 cask "tableplus"
 
-mas "Bear", id: 1091189122
 mas "Slack", id: 803453959
 mas "Todoist", id: 585829637
