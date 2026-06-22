@@ -79,6 +79,7 @@ npm_packages=(
   intelephense
   typescript
   typescript-language-server
+  vercel
 )
 for package in "${npm_packages[@]}"; do
   mise exec -- npm install -g "${package}"
