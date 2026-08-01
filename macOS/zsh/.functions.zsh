@@ -57,3 +57,24 @@ tdl() {
   tmux send-keys -t "$editor_pane" "$EDITOR ." C-m
   tmux select-pane -t "$editor_pane"
 }
+
+# Toggle whether closing the lid puts the MacBook to sleep.
+toggle-system-sleep() {
+  local sleep_disabled
+  sleep_disabled=$(pmset -g | awk '/SleepDisabled/ { print $2 }')
+
+  if [[ "$sleep_disabled" == "1" ]]; then
+    sudo pmset -a disablesleep 0
+  else
+    sudo pmset -a disablesleep 1
+  fi
+
+  # Re-read so a failed sudo cannot report a change that never happened.
+  sleep_disabled=$(pmset -g | awk '/SleepDisabled/ { print $2 }')
+
+  if [[ "$sleep_disabled" == "1" ]]; then
+    echo "System sleep is disabled. Closing the lid keeps this MacBook awake."
+  else
+    echo "System sleep is enabled. Closing the lid puts this MacBook to sleep."
+  fi
+}
