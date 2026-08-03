@@ -28,6 +28,7 @@ brew "morantron/tmux-fingers/tmux-fingers"
 brew "tree-sitter-cli"
 brew "watch"
 brew "zoxide"
+brew "zstd"
 
 cask "claude"
 cask "docker-desktop"
