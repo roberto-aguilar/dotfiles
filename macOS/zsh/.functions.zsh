@@ -64,9 +64,9 @@ toggle-system-sleep() {
   sleep_disabled=$(pmset -g | awk '/SleepDisabled/ { print $2 }')
 
   if [[ "$sleep_disabled" == "1" ]]; then
-    sudo pmset -a disablesleep 0
+    sudo /usr/bin/pmset -a disablesleep 0
   else
-    sudo pmset -a disablesleep 1
+    sudo /usr/bin/pmset -a disablesleep 1
   fi
 
   # Re-read so a failed sudo cannot report a change that never happened.

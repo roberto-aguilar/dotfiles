@@ -1,0 +1,2 @@
+%admin ALL=(ALL) NOPASSWD: /usr/bin/pmset -a disablesleep 0
+%admin ALL=(ALL) NOPASSWD: /usr/bin/pmset -a disablesleep 1

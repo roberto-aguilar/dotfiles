@@ -48,6 +48,13 @@ if ! cmp -s "${SSHD_SECURITY_SOURCE}" "${SSHD_SECURITY_TARGET}" 2>/dev/null; the
   sudo install -o root -g wheel -m 644 "${SSHD_SECURITY_SOURCE}" "${SSHD_SECURITY_TARGET}"
 fi
 
+# Allow toggle-system-sleep to run pmset without a password.
+SUDOERS_SOURCE="${DOTFILES_DIRECTORY}/macOS/sudoers/toggle-system-sleep"
+SUDOERS_TARGET="/etc/sudoers.d/toggle-system-sleep"
+if ! cmp -s "${SUDOERS_SOURCE}" "${SUDOERS_TARGET}" 2>/dev/null; then
+  sudo install -o root -g wheel -m 440 "${SUDOERS_SOURCE}" "${SUDOERS_TARGET}"
+fi
+
 # Install ZSH configuration files.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" zsh
 
