@@ -7,6 +7,10 @@ set -eu
 # Determine the dotfiles directory.
 DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
 
+# Repair DNS before anything reaches the network. Omarchy upgrades
+# reshuffle the system resolver and can leave every lookup failing.
+"${DOTFILES_DIRECTORY}/arch/dns-resolution"
+
 # Install Laravel development environment.
 if [ -x "${HOME}/.local/share/omarchy/bin/omarchy-install-dev-env" ]; then
   "${HOME}/.local/share/omarchy/bin/omarchy-install-dev-env" laravel

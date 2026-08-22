@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# DNS repair for Omarchy upgrades. The upgrade hands the system resolver
+# to systemd-resolved: it points /etc/resolv.conf at the resolved stub
+# (127.0.0.53) and writes DNS= / FallbackDNS= keys into
+# /etc/systemd/resolved.conf. On a machine where NetworkManager owns DNS
+# and systemd-resolved is not running -- or where those keys land empty --
+# nothing answers on the stub address and every name lookup dies with
+# "Temporary failure in name resolution". The first casualty is usually
+# `claude`: Omarchy ships it as a lazy mise stub, so the very first run
+# has to reach GitHub, and mise reports the outage as a failed install of
+# aqua:anthropics/claude-code rather than as a broken resolver.
+#
+# Idempotent: repairs only what is actually broken and exits quietly when
+# resolution already works.
+
+set -eu
+
+if getent hosts github.com >/dev/null 2>&1; then
+  exit 0
+fi
+
+echo "DNS resolution is broken; repairing the system resolver."
+
+# Empty DNS= / FallbackDNS= keys give systemd-resolved no upstream at all
+# and mask the servers handed over by DHCP or a VPN. Comment out the empty
+# ones and leave any populated ones alone.
+RESOLVED_CONF="/etc/systemd/resolved.conf"
+if [ -f "${RESOLVED_CONF}" ] && grep -qE '^[[:space:]]*(DNS|FallbackDNS)[[:space:]]*=[[:space:]]*$' "${RESOLVED_CONF}"; then
+  sudo sed -i -E 's/^([[:space:]]*(DNS|FallbackDNS)[[:space:]]*=[[:space:]]*)$/#\1/' "${RESOLVED_CONF}"
+  sudo systemctl try-restart systemd-resolved
+fi
+
+# Hand /etc/resolv.conf back to whichever resolver is actually running.
+# systemd-resolved wins when it is up, because it is the one publishing
+# the stub; otherwise NetworkManager's own resolv.conf is authoritative.
+if systemctl is-active --quiet systemd-resolved; then
+  RESOLVER="/run/systemd/resolve/stub-resolv.conf"
+elif systemctl is-active --quiet NetworkManager; then
+  RESOLVER="/run/NetworkManager/resolv.conf"
+  # NetworkManager only writes that file while its default DNS plugin is
+  # in charge; a restart regenerates it from the active connection.
+  [ -e "${RESOLVER}" ] || sudo systemctl restart NetworkManager
+else
+  echo "Neither systemd-resolved nor NetworkManager is running; start one and re-run." >&2
+  exit 1
+fi
+
+if [ "$(readlink -f /etc/resolv.conf 2>/dev/null || true)" != "${RESOLVER}" ]; then
+  sudo ln -sfn "${RESOLVER}" /etc/resolv.conf
+  if systemctl is-active --quiet NetworkManager; then
+    sudo systemctl restart NetworkManager
+  fi
+fi
+
+# Report rather than fail silently: a resolver that is still down after
+# this is a link problem, not a configuration problem.
+if getent hosts github.com >/dev/null 2>&1; then
+  echo "DNS resolution restored."
+else
+  echo "DNS resolution still failing; check the network link itself." >&2
+  exit 1
+fi
