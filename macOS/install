@@ -83,6 +83,7 @@ npm_packages=(
   @circleback/cli
   cf
   @playwright/cli
+  @pnp/cli-microsoft365
   intelephense
   typescript
   typescript-language-server

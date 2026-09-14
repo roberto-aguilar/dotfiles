@@ -78,6 +78,14 @@ omarchy-pkg-add github-copilot-cli
 # Install Google Gemini CLI for terminal-based agentic coding.
 omarchy-pkg-add gemini-cli
 
+# Install Azure CLI for managing Azure resources from the terminal.
+omarchy-pkg-add azure-cli
+
+# Install CLI for Microsoft 365 for managing Microsoft 365 tenants from the terminal.
+if ! command -v m365 >/dev/null 2>&1; then
+  npm install -g @pnp/cli-microsoft365
+fi
+
 # Install Web Applications
 web_applications=(
   "Claude|https://claude.ai/new|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/claude-ai-light.png"
