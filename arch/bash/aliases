@@ -2,3 +2,6 @@
 
 # Handy PHP development aliases.
 alias sail="vendor/bin/sail"
+
+# Drop Omarchy's default permission mode so `cx` honors ~/.claude/settings.json.
+alias cx='printf "\033[2J\033[3J\033[H" && claude'
