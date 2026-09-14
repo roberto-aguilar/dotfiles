@@ -2,6 +2,8 @@
     name = Roberto Aguilar
     email = roberto.aguilar.arrieta@gmail.com
     signingkey = E19E54A71CC6CCEE
+[include]
+    path = ~/.config/git/local.gitconfig
 [color]
     ui = true
 [alias]
