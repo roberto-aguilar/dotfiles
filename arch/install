@@ -98,10 +98,6 @@ sudo systemctl enable --now sshd
 # Enable SSH agent via systemd for passphrase caching.
 systemctl --user enable --now ssh-agent.socket
 
-# Set SSH_AUTH_SOCK for the SSH agent in Hyprland.
-LINE='env = SSH_AUTH_SOCK,$XDG_RUNTIME_DIR/ssh-agent.socket'
-grep -qF "$LINE" "${HOME}/.config/hypr/envs.conf" 2>/dev/null || echo "$LINE" >>"${HOME}/.config/hypr/envs.conf"
-
 # Auto-add SSH keys to the agent on first use.
 mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
 touch "${HOME}/.ssh/config" && chmod 600 "${HOME}/.ssh/config"
@@ -124,6 +120,9 @@ stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" lazygit
 
 # Stow NeoVim configuration (hidden files, etc.).
 stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
+
+# Point SSH_AUTH_SOCK at the systemd SSH agent for the whole uwsm session.
+stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" uwsm
 
 
 # Apply Bluetooth audio fixes for the onboard WiFi/BT card.
