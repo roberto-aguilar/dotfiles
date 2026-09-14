@@ -22,21 +22,18 @@ if [ -f "${HOME}/.config/hypr/monitors.conf" ]; then
     "${HOME}/.config/hypr/monitors.conf"
 fi
 
-# Allow to toggle between keyboard layouts.
-if [ -f "${HOME}/.config/hypr/input.conf" ]; then
-  sed -i \
-    -e 's/^.*kb_layout.*/  kb_layout = us,es/' \
-    -e 's/^\(.*kb_options = compose:caps\).*/\1,grp:alts_toggle/' \
-    "${HOME}/.config/hypr/input.conf"
-fi
+# Use US and Spanish keyboard layouts, switched with Left Alt + Right Alt.
+INPUT_LUA="${HOME}/.config/hypr/input.lua"
+grep -qF 'kb_layout = "us,es"' "${INPUT_LUA}" 2>/dev/null || cat >>"${INPUT_LUA}" <<'LUA'
 
-# Show the active keyboard layout in waybar.
-WAYBAR_CONFIG="${HOME}/.config/waybar/config.jsonc"
-if ! jq -e '."modules-right" | index("hyprland/language")' "${WAYBAR_CONFIG}" >/dev/null 2>&1; then
-  jq '."modules-right" += ["hyprland/language"] | . + {"hyprland/language": {"format": "{short}"}}' \
-    "${WAYBAR_CONFIG}" >"${WAYBAR_CONFIG}.tmp" && mv "${WAYBAR_CONFIG}.tmp" "${WAYBAR_CONFIG}"
-  omarchy-restart-waybar
-fi
+-- dotfiles: US and Spanish layouts, switched with Left Alt + Right Alt.
+hl.config({
+  input = {
+    kb_layout = "us,es",
+    kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
+  },
+})
+LUA
 
 # Disable IDLE locking until the `hyprlock` bug is fixed upstream.
 LINE="exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle"
