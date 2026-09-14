@@ -39,9 +39,8 @@ hl.config({
 })
 LUA
 
-# Disable IDLE locking until the `hyprlock` bug is fixed upstream.
-LINE="exec-once = while ! pgrep -x hypridle; do sleep 0.2; done && omarchy-toggle-idle"
-grep -qF "$LINE" "${HOME}/.config/hypr/autostart.conf" 2>/dev/null || echo "$LINE" >>"${HOME}/.config/hypr/autostart.conf"
+# Keep the desktop awake: no screensaver and no idle lock.
+omarchy toggle idle stay-awake
 
 # Install AUR Packages.
 applications=(
