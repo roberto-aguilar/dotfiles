@@ -19,10 +19,12 @@ if [ -f "${MONITORS_LUA}" ]; then
     -e 's/^local omarchy_gdk_scale = .*/local omarchy_gdk_scale = 1/' \
     -e 's/^local omarchy_monitor_scale = .*/local omarchy_monitor_scale = 1/' \
     "${MONITORS_LUA}"
-  grep -qF 'desc:LG Electronics LG ULTRAGEAR' "${MONITORS_LUA}" || cat >>"${MONITORS_LUA}" <<'LUA'
+  grep -qF 'desc:LG Electronics LG ULTRAGEAR 405' "${MONITORS_LUA}" || cat >>"${MONITORS_LUA}" <<'LUA'
 
 -- dotfiles: pin every LG UltraGear panel to 1440p at 144Hz at 1x scale.
-hl.monitor({ output = "desc:LG Electronics LG ULTRAGEAR", mode = "2560x1440@144", position = "auto", scale = omarchy_monitor_scale })
+-- Both panels share the same description, so match on the serial to fix left/right.
+hl.monitor({ output = "desc:LG Electronics LG ULTRAGEAR 405", mode = "2560x1440@144", position = "0x0", scale = omarchy_monitor_scale })
+hl.monitor({ output = "desc:LG Electronics LG ULTRAGEAR 208", mode = "2560x1440@144", position = "2560x0", scale = omarchy_monitor_scale })
 LUA
 fi
 
