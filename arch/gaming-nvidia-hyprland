@@ -2,8 +2,9 @@
 
 # Gaming fixes for a workstation running the NVIDIA proprietary driver
 # on the Hyprland Wayland compositor. Omarchy already sets the driver
-# environment Wayland needs, so this script covers what sits outside the
-# compositor: a performance CPU governor during play, an in-game frame
+# environment Wayland needs. This script adds the compositor rules games
+# want (tearing, adaptive sync, fullscreen for games that do not take it
+# themselves), a performance CPU governor during play, an in-game frame
 # rate overlay, a GPU driver that stays resident between sessions, and
 # game data that stays in RAM instead of being paged out to the SSD.
 # All fixes are idempotent.
@@ -11,6 +12,28 @@
 set -eu
 
 DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
+# Reshape Hyprland's presentation pipeline for gaming. Omarchy already
+# makes Steam windows opaque and leaves direct scanout off, so only the
+# rules Omarchy does not ship go here.
+HYPRLAND_LUA="${HOME}/.config/hypr/hyprland.lua"
+grep -qF 'dotfiles: gaming on NVIDIA' "${HYPRLAND_LUA}" 2>/dev/null || cat >>"${HYPRLAND_LUA}" <<'LUA'
+
+-- dotfiles: gaming on NVIDIA.
+-- Let games opt out of compositor vsync for lower input lag, and use the
+-- monitor's adaptive sync only while a fullscreen app owns the screen.
+hl.config({
+  general = { allow_tearing = true },
+  misc = { vrr = 2 },
+})
+
+-- Steam games take the tear-capable presentation path enabled above.
+o.window("^steam_app_", { immediate = true })
+
+-- DOOM Eternal opens a launcher window next to the game window and never
+-- takes fullscreen on its own. Fullscreen the game window, not the launcher.
+o.window({ class = "^steam_app_782330$", title = "DOOMEternal" }, { fullscreen = true })
+LUA
 
 # Have the CPU run at its performance governor automatically whenever a
 # game is launched (so we never ship a game running on "powersave"),
