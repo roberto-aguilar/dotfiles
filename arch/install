@@ -81,6 +81,9 @@ omarchy-pkg-add gemini-cli
 # Install Azure CLI for managing Azure resources from the terminal.
 omarchy-pkg-add azure-cli
 
+# Install AWS CLI for managing AWS resources from the terminal.
+omarchy-pkg-add aws-cli-v2
+
 # Install CLI for Microsoft 365 for managing Microsoft 365 tenants from the terminal.
 if ! command -v m365 >/dev/null 2>&1; then
   npm install -g @pnp/cli-microsoft365
