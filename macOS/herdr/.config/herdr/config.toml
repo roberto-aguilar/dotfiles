@@ -1,0 +1,88 @@
+# Mirrors the macOS tmux config in macOS/tmux/.tmux.conf
+# tmux session -> herdr workspace, tmux window -> herdr tab, tmux pane -> herdr pane
+
+# Skip the first-run setup, which herdr would otherwise write here itself
+onboarding = false
+
+[theme]
+# tmux ran on the terminal's own palette (bg=default, fg=default, ANSI blue accents)
+name = "terminal"
+
+[theme.custom]
+# Ghostty's default background, so the tab bar and toasts blend into the
+# terminal. "reset" would blend too, but herdr then draws the active tab's
+# text in dark gray, which is hard to read on the blue accent.
+panel_bg = "#282c34"
+
+[terminal]
+# Matches -c "#{pane_current_path}" on every split, window, and session
+new_cwd = "follow"
+
+[keys]
+prefix = "ctrl+space"
+
+# Config and help
+reload_config = "prefix+q"
+detach = "prefix+d"
+
+# Copy mode
+copy_mode = "prefix+["
+
+# Panes
+split_vertical = "prefix+%"
+split_horizontal = "prefix+\""
+zoom = "prefix+z"
+last_pane = "prefix+;"
+
+# Panes are closed with `exit`
+close_pane = []
+
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
+
+# Like bind -r H/J/K/L resize-pane: enter resize mode, then repeat h/j/k/l
+resize_mode = ["prefix+shift+h", "prefix+shift+j", "prefix+shift+k", "prefix+shift+l"]
+
+# herdr's defaults for these collide with the resize keys above
+swap_pane_left = []
+swap_pane_down = []
+swap_pane_up = []
+swap_pane_right = []
+
+# Windows -> tabs
+new_tab = "prefix+c"
+rename_tab = "prefix+r"
+close_tab = "prefix+&"
+switch_tab = "prefix+1..9"
+previous_tab = "prefix+p"
+next_tab = "prefix+n"
+
+# Sessions -> workspaces
+new_workspace = "prefix+shift+c"
+rename_workspace = "prefix+shift+r"
+previous_workspace = "prefix+("
+next_workspace = "prefix+)"
+
+[ui]
+accent = "blue"
+
+# tmux drew single-line dividers between adjacent panes and no outer frame
+pane_gaps = false
+pane_outer_borders = false
+
+# tmux had no scrollbar column beside its panes
+pane_scrollbars = false
+
+# automatic-rename gave windows a name without prompting
+prompt_new_tab_name = false
+
+# set -g mouse on
+mouse_capture = true
+
+# status-right had the zoom flag followed by #h
+tab_bar_right = [{ type = "zoom" }, { type = "hostname" }]
+
+# set-titles was never turned on, so leave the outer terminal title alone
+window_title = ""

@@ -106,6 +106,17 @@ if tmux info &>/dev/null; then
   tmux source "${HOME}/.tmux.conf"
 fi
 
+# Install herdr configuration file. herdr writes its own config.toml on first
+# run, which would block stow, so drop it unless it is already our symlink.
+HERDR_CONFIG="${HOME}/.config/herdr/config.toml"
+if [ -f "${HERDR_CONFIG}" ] && [ ! -L "${HERDR_CONFIG}" ]; then
+  rm "${HERDR_CONFIG}"
+fi
+mkdir -p "${HOME}/.config/herdr"
+stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" herdr
+# Reload a running server, a no-op failure when none is up.
+herdr server reload-config &>/dev/null || true
+
 # Install Vim configuration.
 stow -d "${DOTFILES_DIRECTORY}/macOS" -t "${HOME}" vim
 
