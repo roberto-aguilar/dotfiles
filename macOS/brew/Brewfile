@@ -1,5 +1,6 @@
 tap "stripe/stripe-cli"
 
+brew "awscli"
 brew "azure-cli"
 brew "bat"
 brew "composer"
