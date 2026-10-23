@@ -20,11 +20,13 @@ HYPRLAND_LUA="${HOME}/.config/hypr/hyprland.lua"
 grep -qF 'dotfiles: gaming on NVIDIA' "${HYPRLAND_LUA}" 2>/dev/null || cat >>"${HYPRLAND_LUA}" <<'LUA'
 
 -- dotfiles: gaming on NVIDIA.
--- Let games opt out of compositor vsync for lower input lag, and use the
--- monitor's adaptive sync only while a fullscreen app owns the screen.
+-- Let games opt out of compositor vsync for lower input lag. Adaptive sync
+-- stays off: toggling it on for fullscreen apps (vrr = 2) makes the LG
+-- UltraGear drop its DisplayPort link every 13 seconds on the NVIDIA
+-- driver, which shows up as a fullscreen window going black.
 hl.config({
   general = { allow_tearing = true },
-  misc = { vrr = 2 },
+  misc = { vrr = 0 },
 })
 
 -- Steam games take the tear-capable presentation path enabled above.
