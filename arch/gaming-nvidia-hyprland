@@ -3,9 +3,9 @@
 # Gaming fixes for a workstation running the NVIDIA proprietary driver
 # on the Hyprland Wayland compositor. Omarchy already sets the driver
 # environment Wayland needs. This script adds a performance CPU governor
-# during play, an in-game frame rate overlay, a GPU driver that stays
-# resident between sessions, and game data that stays in RAM instead of
-# being paged out to the SSD. Compositor rules live in hypr/dotfiles.lua.
+# during play, an in-game frame rate overlay, and a GPU driver that
+# stays resident between sessions. Compositor rules live in
+# hypr/dotfiles.lua.
 # All fixes are idempotent.
 
 set -eu
@@ -27,12 +27,3 @@ sudo pacman -S --noconfirm --needed gamemode lib32-gamemode mangohud lib32-mango
 # game launch pays the full driver initialization cost as a visible
 # startup stall on the first frame.
 sudo systemctl enable --now nvidia-persistenced
-
-# Keep game data resident in RAM rather than paged out to the SSD. The
-# kernel's default swappiness assumes a small-RAM machine that should
-# evict pages proactively; with 64 GB installed there is enough headroom
-# to hold everything in memory and avoid mid-session SSD stalls.
-sudo tee /etc/sysctl.d/99-gaming.conf >/dev/null <<'SYSCTL'
-vm.swappiness=10
-SYSCTL
-sudo sysctl --system >/dev/null
