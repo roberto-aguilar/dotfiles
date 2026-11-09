@@ -28,19 +28,6 @@ hl.monitor({ output = "desc:LG Electronics LG ULTRAGEAR 208", mode = "2560x1440@
 LUA
 fi
 
-# Use US and Spanish keyboard layouts, switched with Left Alt + Right Alt.
-INPUT_LUA="${HOME}/.config/hypr/input.lua"
-grep -qF 'kb_layout = "us,es"' "${INPUT_LUA}" 2>/dev/null || cat >>"${INPUT_LUA}" <<'LUA'
-
--- dotfiles: US and Spanish layouts, switched with Left Alt + Right Alt.
-hl.config({
-  input = {
-    kb_layout = "us,es",
-    kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
-  },
-})
-LUA
-
 # Keep the desktop awake: no screensaver and no idle lock.
 omarchy toggle idle stay-awake
 
@@ -132,6 +119,15 @@ stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" nvim
 
 # Point SSH_AUTH_SOCK at the systemd SSH agent for the whole uwsm session.
 stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" uwsm
+
+# Load personal Hyprland rules from a stowed module Omarchy never refreshes.
+stow -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" hypr
+HYPRLAND_LUA="${HOME}/.config/hypr/hyprland.lua"
+grep -qF 'require("hypr.dotfiles")' "${HYPRLAND_LUA}" 2>/dev/null || cat >>"${HYPRLAND_LUA}" <<'LUA'
+
+-- dotfiles: personal Hyprland rules.
+require("hypr.dotfiles")
+LUA
 
 
 # Apply Bluetooth audio fixes for the onboard WiFi/BT card.
