@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Bluetooth firmware fix for the onboard RTL8821CE (USB ID 13d3:3556).
+# Stock btusb lacks that ID, so it never runs the Realtek setup and the chip
+# stays on its ROM firmware. The btusb-rtl8821ce DKMS package backports
+# mainline commit 7adde1e5216e (v7.4-rc1) and rebuilds btusb for every new
+# kernel. It retires itself once a stock btusb carries the ID.
+# Idempotent: does nothing when the current version is already installed.
+
+set -eu
+
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
+PACKAGE_NAME="btusb-rtl8821ce"
+PACKAGE_SOURCE="${DOTFILES_DIRECTORY}/arch/${PACKAGE_NAME}"
+PACKAGE_VERSION="$(sed -n 's/^PACKAGE_VERSION="\(.*\)"$/\1/p' "${PACKAGE_SOURCE}/dkms.conf")"
+INSTALLED_SOURCE="/usr/src/${PACKAGE_NAME}-${PACKAGE_VERSION}"
+KERNEL_RELEASE="$(uname -r)"
+
+# Tools prepare-source runs at build time, often inside a kernel upgrade.
+sudo pacman -S --noconfirm --needed dkms curl gnupg python binutils patch tar xz zstd
+
+# The first version of this fix was pinned to Linux 7.2.8.
+if [ -n "$(dkms status btusb-rtl8821ce-3556/1.0)" ]; then
+  sudo dkms remove btusb-rtl8821ce-3556/1.0 --all
+fi
+sudo rm -rf /usr/src/btusb-rtl8821ce-3556-1.0
+
+# Drop every other version of this package.
+for registered_version in $(dkms status "${PACKAGE_NAME}" | sed -n "s|^${PACKAGE_NAME}/\([^,:]*\)[,:].*|\1|p" | sort -u); do
+  if [ "${registered_version}" != "${PACKAGE_VERSION}" ]; then
+    sudo dkms remove "${PACKAGE_NAME}/${registered_version}" --all
+  fi
+done
+for source_directory in /usr/src/"${PACKAGE_NAME}"-*; do
+  if [ -d "${source_directory}" ] && [ "${source_directory}" != "${INSTALLED_SOURCE}" ]; then
+    sudo rm -rf "${source_directory}"
+  fi
+done
+
+# Reinstall when the repo copy changed or this kernel lacks the module.
+if diff -rq "${PACKAGE_SOURCE}" "${INSTALLED_SOURCE}" >/dev/null 2>&1 &&
+  dkms status "${PACKAGE_NAME}/${PACKAGE_VERSION}" -k "${KERNEL_RELEASE}" | grep -q ': installed'; then
+  exit 0
+fi
+if [ -n "$(dkms status "${PACKAGE_NAME}/${PACKAGE_VERSION}")" ]; then
+  sudo dkms remove "${PACKAGE_NAME}/${PACKAGE_VERSION}" --all
+fi
+sudo rm -rf "${INSTALLED_SOURCE}"
+sudo cp -r "${PACKAGE_SOURCE}" "${INSTALLED_SOURCE}"
+sudo dkms add "${PACKAGE_NAME}/${PACKAGE_VERSION}"
+if ! sudo dkms install "${PACKAGE_NAME}/${PACKAGE_VERSION}" -k "${KERNEL_RELEASE}"; then
+  # prepare-source explains itself in the DKMS build log.
+  sudo sh -c "grep -h '^btusb-rtl8821ce:' /var/lib/dkms/${PACKAGE_NAME}/${PACKAGE_VERSION}/build/make.log /var/lib/dkms/${PACKAGE_NAME}/${PACKAGE_VERSION}/${KERNEL_RELEASE}/*/log/make.log" 2>/dev/null >&2 || true
+  exit 1
+fi
+
+# Swap the running driver for the new build.
+sudo modprobe -r btusb && sudo modprobe btusb

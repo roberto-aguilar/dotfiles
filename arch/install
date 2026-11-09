@@ -133,6 +133,9 @@ LUA
 # Apply Bluetooth audio fixes for the onboard WiFi/BT card.
 "${DOTFILES_DIRECTORY}/arch/bluetooth-audio-rtl8821ce"
 
+# Rebuild btusb with the card's USB ID so it loads Realtek firmware on every kernel.
+"${DOTFILES_DIRECTORY}/arch/bluetooth-firmware-rtl8821ce"
+
 # Apply gaming fixes for this NVIDIA + Hyprland workstation.
 "${DOTFILES_DIRECTORY}/arch/gaming-nvidia-hyprland"
 

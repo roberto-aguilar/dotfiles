@@ -1,0 +1,293 @@
+#!/bin/bash
+
+# DKMS PRE_BUILD step: fetch the official source of the target kernel, add
+# the RTL8821CE's USB ID to btusb.c and prove the result is the stock module
+# plus that one ID. Runs as root in the DKMS build directory, usually
+# unattended inside a pacman kernel upgrade, so every failure must be loud.
+#
+# Usage: prepare-source KERNEL_RELEASE
+# Environment overrides, for testing only:
+#   BTUSB_RTL8821CE_CACHE_DIRECTORY         default /var/cache/btusb-rtl8821ce
+#   BTUSB_RTL8821CE_STOCK_MODULE            default: found under /usr/lib/modules
+#   BTUSB_RTL8821CE_KERNEL_BUILD_DIRECTORY  default /usr/lib/modules/RELEASE/build
+#   BTUSB_RTL8821CE_MIRROR_URL              default https://cdn.kernel.org/pub/linux/kernel
+
+set -eu -o pipefail
+
+readonly PREFIX="btusb-rtl8821ce:"
+readonly DEVICE_VENDOR=13d3
+readonly DEVICE_PRODUCT=3556
+# "Kernel.org checksum autosigner <autosigner@kernel.org>", which signs
+# sha256sums.asc. Fetched via WKD, cross-checked on keys.openpgp.org.
+readonly SIGNING_KEY_FINGERPRINT=B8868C80BA62A1FFFAF5FDA9632D3A06589DA6B1
+
+script_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+build_directory="$(pwd)"
+kernel_release="${1:-}"
+stop_reason="unexpected error, see the lines above"
+work_directory=""
+
+say() {
+  echo "${PREFIX} $*"
+}
+
+stop() {
+  stop_reason="$*"
+  exit 1
+}
+
+finish() {
+  local status=$?
+  [ -n "${work_directory}" ] && rm -rf "${work_directory}"
+  [ "${status}" -eq 0 ] && return
+  local line="${PREFIX} stopped for kernel ${kernel_release:-unknown}: ${stop_reason}. The stock btusb driver stays in use."
+  echo "${line}" >&2
+  # DKMS hides this output in make.log, so leave a trace in the journal too.
+  if [ "$(id -u)" -eq 0 ] && command -v logger >/dev/null 2>&1; then
+    logger -t btusb-rtl8821ce -p user.err -- "${line}" || true
+  fi
+}
+trap finish EXIT
+
+# Print the kernel.org version for a kernel release: 7.2.8-9-omarchy is
+# 7.2.8, and 7.3-1 or 7.3.0-1 is 7.3 because kernel.org drops the ".0".
+upstream_version_of() {
+  local release="$1"
+  [[ "${release}" =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?(-[^[:space:]/]*)?$ ]] || return 1
+  local major="${BASH_REMATCH[1]}" minor="${BASH_REMATCH[2]}" patch="${BASH_REMATCH[4]}" suffix="${BASH_REMATCH[5]}"
+  [[ "${suffix}" =~ (^|[-._+])rc[0-9]* ]] && return 1
+  if [ -n "${patch}" ] && [ "${patch}" != "0" ]; then
+    echo "${major}.${minor}.${patch}"
+  else
+    echo "${major}.${minor}"
+  fi
+}
+
+find_stock_module() {
+  if [ -n "${BTUSB_RTL8821CE_STOCK_MODULE:-}" ]; then
+    echo "${BTUSB_RTL8821CE_STOCK_MODULE}"
+    return
+  fi
+  # Once this package is installed, DKMS moves the stock module into
+  # original_module next to the build directory, so look there as well.
+  local candidate
+  for candidate in \
+    "/usr/lib/modules/${kernel_release}/kernel/drivers/bluetooth/btusb.ko"{,.zst,.xz,.gz} \
+    "${build_directory}/../../original_module/${kernel_release}"/*/btusb.ko{,.zst,.xz,.gz}; do
+    if [ -f "${candidate}" ]; then
+      echo "${candidate}"
+      return
+    fi
+  done
+  return 1
+}
+
+decompress_module() {
+  case "$1" in
+    *.zst) zstd -dcq -- "$1" >"$2" ;;
+    *.xz) xz -dc -- "$1" >"$2" ;;
+    *.gz) gzip -dc -- "$1" >"$2" ;;
+    *) cp -- "$1" "$2" ;;
+  esac
+}
+
+parity() {
+  python3 -I "${script_directory}/module-parity.py" "$@"
+}
+
+# Verify the PGP signature on a sha256sums.asc and print the SHA-256 it
+# lists for the tarball. Only the signed part of the file is trusted.
+signed_checksum() {
+  local checksums_file="$1" signed_file="${work_directory}/signed-checksums" status_file="${work_directory}/gpg-status"
+  rm -f "${signed_file}" "${status_file}"
+  if ! gpgv --homedir "${work_directory}/gnupg" --keyring "${work_directory}/gnupg/trusted.gpg" \
+    --status-fd 3 --output "${signed_file}" "${checksums_file}" 3>"${status_file}" >/dev/null 2>&1; then
+    say "PGP signature on sha256sums.asc is not valid" >&2
+    return 1
+  fi
+  if ! awk -v fingerprint="${SIGNING_KEY_FINGERPRINT}" \
+    '$2 == "VALIDSIG" && $NF == fingerprint { found = 1 } END { exit !found }' "${status_file}"; then
+    say "sha256sums.asc is not signed by ${SIGNING_KEY_FINGERPRINT}" >&2
+    return 1
+  fi
+  local checksum
+  checksum="$(awk -v name="${tarball_name}" '$2 == name { print $1 }' "${signed_file}")"
+  if ! [[ "${checksum}" =~ ^[0-9a-f]{64}$ ]]; then
+    say "the signed sha256sums.asc has no single entry for ${tarball_name}" >&2
+    return 1
+  fi
+  echo "${checksum}"
+}
+
+# Succeed only if the tarball matches the checksum in a validly signed file.
+tarball_is_verified() {
+  local checksums_file="$1" tarball="$2" expected actual
+  expected="$(signed_checksum "${checksums_file}")" || return 1
+  actual="$(sha256sum -- "${tarball}" | awk '{ print $1 }')"
+  if [ "${actual}" != "${expected}" ]; then
+    say "SHA-256 of ${tarball_name} does not match the signed checksum" >&2
+    return 1
+  fi
+}
+
+fetch() {
+  curl --fail --silent --show-error --location --proto '=https,file' --proto-redir '=https' \
+    --connect-timeout 30 --retry 3 --max-time 1800 --output "$2" -- "$1"
+}
+
+# Keep the tarballs of every installed kernel so rebuilding one never
+# re-downloads, and drop the rest so the cache does not grow forever.
+clean_cache() {
+  local -A keep=(["${upstream_version}"]=1)
+  local build release version file
+  for build in /usr/lib/modules/*/build; do
+    [ -d "${build}" ] || continue
+    release="$(basename "$(dirname "${build}")")"
+    version="$(upstream_version_of "${release}")" && keep["${version}"]=1
+  done
+  for file in "${cache_directory}"/linux-*; do
+    [ -e "${file}" ] || continue
+    version="$(basename "${file}")"
+    version="${version#linux-}"
+    version="${version%%.tar.xz*}"
+    if [ -z "${keep[${version}]:-}" ]; then
+      say "removing ${file} from the cache"
+      rm -f -- "${file}"
+    fi
+  done
+}
+
+build_trial() {
+  local llvm=()
+  grep -q '^CONFIG_CC_IS_CLANG=y' "${kernel_build_directory}/.config" 2>/dev/null && llvm=(LLVM=1)
+  if ! make -C "${kernel_build_directory}" M="${trial_directory}" KERNELRELEASE="${kernel_release}" \
+    "${llvm[@]}" -j"$(nproc)" modules >"${work_directory}/trial-build.log" 2>&1; then
+    tail -n 30 "${work_directory}/trial-build.log" >&2
+    stop "the trial build of btusb failed"
+  fi
+}
+
+# Step 1: work out which kernel.org release this kernel comes from.
+[ $# -eq 1 ] || stop "usage: prepare-source KERNEL_RELEASE"
+upstream_version="$(upstream_version_of "${kernel_release}")" ||
+  stop "cannot tell the kernel.org version of '${kernel_release}' (release candidates and unknown formats are not supported)"
+major_version="${upstream_version%%.*}"
+tarball_name="linux-${upstream_version}.tar.xz"
+cache_directory="${BTUSB_RTL8821CE_CACHE_DIRECTORY:-/var/cache/btusb-rtl8821ce}"
+kernel_build_directory="${BTUSB_RTL8821CE_KERNEL_BUILD_DIRECTORY:-/usr/lib/modules/${kernel_release}/build}"
+mirror_url="${BTUSB_RTL8821CE_MIRROR_URL:-https://cdn.kernel.org/pub/linux/kernel}"
+release_url="${mirror_url}/v${major_version}.x"
+say "preparing btusb for kernel ${kernel_release} (Linux ${upstream_version})"
+
+work_directory="$(mktemp -d "${TMPDIR:-/tmp}/btusb-rtl8821ce.XXXXXX")"
+trial_directory="${work_directory}/trial"
+mkdir -p "${trial_directory}" "${work_directory}/source"
+[ -d "${kernel_build_directory}" ] || stop "kernel headers not found at ${kernel_build_directory}"
+
+# Step 2: stop if the stock driver already knows the adapter.
+stock_module="$(find_stock_module)" || stop "the stock btusb module for ${kernel_release} was not found"
+say "stock module: ${stock_module}"
+decompress_module "${stock_module}" "${work_directory}/stock.ko" || stop "cannot decompress ${stock_module}"
+contains_status=0
+parity contains "${work_directory}/stock.ko" "${DEVICE_VENDOR}" "${DEVICE_PRODUCT}" || contains_status=$?
+case "${contains_status}" in
+  0) stop "the stock btusb already supports ${DEVICE_VENDOR}:${DEVICE_PRODUCT}, so this package is no longer needed and can be removed" ;;
+  1) say "stock module lacks ${DEVICE_VENDOR}:${DEVICE_PRODUCT}, patching is still needed" ;;
+  *) stop "cannot read the device tables of ${stock_module}" ;;
+esac
+
+# Step 3: get a verified copy of the kernel.org tarball.
+install -d -m 700 "${work_directory}/gnupg"
+gpg --batch --quiet --homedir "${work_directory}/gnupg" --dearmor \
+  --output "${work_directory}/gnupg/trusted.gpg" "${script_directory}/kernel-org-autosigner.asc" ||
+  stop "cannot read the bundled kernel.org signing key"
+install -d -m 755 "${cache_directory}"
+cached_tarball="${cache_directory}/${tarball_name}"
+cached_checksums="${cached_tarball}.sha256sums.asc"
+if [ -f "${cached_tarball}" ] && [ -f "${cached_checksums}" ] &&
+  tarball_is_verified "${cached_checksums}" "${cached_tarball}"; then
+  say "using cached ${tarball_name}, signature and SHA-256 verified"
+else
+  [ -e "${cached_tarball}" ] && say "cached ${tarball_name} failed verification, downloading it again"
+  rm -f -- "${cached_tarball}" "${cached_checksums}"
+  say "downloading ${release_url}/sha256sums.asc"
+  fetch "${release_url}/sha256sums.asc" "${work_directory}/sha256sums.asc" ||
+    stop "cannot download sha256sums.asc"
+  signed_checksum "${work_directory}/sha256sums.asc" >/dev/null ||
+    stop "sha256sums.asc failed PGP verification"
+  say "downloading ${release_url}/${tarball_name}"
+  fetch "${release_url}/${tarball_name}" "${cached_tarball}.partial" ||
+    stop "cannot download ${tarball_name}"
+  if ! tarball_is_verified "${work_directory}/sha256sums.asc" "${cached_tarball}.partial"; then
+    rm -f -- "${cached_tarball}.partial"
+    stop "${tarball_name} failed verification"
+  fi
+  mv -- "${cached_tarball}.partial" "${cached_tarball}"
+  cp -- "${work_directory}/sha256sums.asc" "${cached_checksums}"
+  say "downloaded ${tarball_name}, signature and SHA-256 verified"
+fi
+clean_cache
+tar -xJf "${cached_tarball}" -C "${work_directory}/source" --no-same-owner \
+  "linux-${upstream_version}/drivers/bluetooth/" || stop "cannot extract drivers/bluetooth from ${tarball_name}"
+bluetooth_directory="${work_directory}/source/linux-${upstream_version}/drivers/bluetooth"
+
+# Step 4: copy btusb.c with every local header it pulls in, and patch it.
+source_files=(btusb.c)
+pending_files=(btusb.c)
+while [ "${#pending_files[@]}" -gt 0 ]; do
+  current_file="${pending_files[0]}"
+  pending_files=("${pending_files[@]:1}")
+  [ -f "${bluetooth_directory}/${current_file}" ] || stop "drivers/bluetooth/${current_file} is missing from ${tarball_name}"
+  while read -r included_file; do
+    [[ "${included_file}" =~ ^[A-Za-z0-9_.-]+$ ]] || stop "btusb includes '${included_file}', which is not a local header"
+    [[ " ${source_files[*]} " == *" ${included_file} "* ]] && continue
+    source_files+=("${included_file}")
+    pending_files+=("${included_file}")
+  done < <(sed -n 's/^[[:space:]]*#[[:space:]]*include[[:space:]]*"\([^"]*\)".*/\1/p' "${bluetooth_directory}/${current_file}")
+done
+for source_file in "${source_files[@]}"; do
+  cp -- "${bluetooth_directory}/${source_file}" "${trial_directory}/"
+done
+cp -- "${script_directory}/Kbuild" "${trial_directory}/"
+say "copied ${source_files[*]}"
+# The upstream commit needs the 13d3:3558 entry as context. Older trees
+# get the backport, which inserts the same two lines at the same place.
+applied_patch=""
+for patch_name in 7adde1e5216e-bluetooth-btusb-add-13d3-3556.patch 7adde1e5216e-backport-without-13d3-3558.patch; do
+  if patch --dry-run --batch --forward --fuzz=0 -p3 -d "${trial_directory}" \
+    <"${script_directory}/${patch_name}" >>"${work_directory}/patch.log" 2>&1; then
+    patch --batch --forward --fuzz=0 --no-backup-if-mismatch -p3 -d "${trial_directory}" \
+      <"${script_directory}/${patch_name}" >>"${work_directory}/patch.log" 2>&1 ||
+      stop "${patch_name} passed a dry run but failed to apply"
+    applied_patch="${patch_name}"
+    break
+  fi
+done
+if [ -z "${applied_patch}" ]; then
+  cat "${work_directory}/patch.log" >&2
+  stop "neither 13d3:3556 patch applies cleanly to Linux ${upstream_version}"
+fi
+say "applied ${applied_patch}"
+
+# Step 5: build it once, copy over any device entries the distribution added
+# to its btusb, then require tables and machine code to match stock exactly.
+say "trial build against ${kernel_build_directory}"
+build_trial
+reconcile_status=0
+parity reconcile "${work_directory}/stock.ko" "${trial_directory}/btusb.ko" "${trial_directory}/btusb.c" \
+  "${DEVICE_VENDOR}" "${DEVICE_PRODUCT}" || reconcile_status=$?
+case "${reconcile_status}" in
+  0) say "device tables already match the stock module" ;;
+  3)
+    say "rebuilding with the copied entries"
+    build_trial
+    ;;
+  *) stop "btusb.c differs from the stock module in a way we must not paper over" ;;
+esac
+parity verify "${work_directory}/stock.ko" "${trial_directory}/btusb.ko" "${DEVICE_VENDOR}" "${DEVICE_PRODUCT}" ||
+  stop "our btusb is not the stock module plus ${DEVICE_VENDOR}:${DEVICE_PRODUCT}"
+
+for source_file in "${source_files[@]}"; do
+  cp -- "${trial_directory}/${source_file}" "${build_directory}/"
+done
+say "patched btusb.c is ready for the DKMS build"
