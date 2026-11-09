@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Let a PlayStation controller reconnect right after it disconnects. The
+# onboard RTL8821CE firmware answers every HCI Disconnect with Unspecified
+# Error (0x1f) and then keeps the dead link for 7 to 10 minutes, ignoring
+# the controller's reconnect attempts until it times out. An HCI Reset,
+# which Bluetooth power off and on sends, clears the dead link at once.
+#
+# A udev rule notices a PlayStation controller leaving over Bluetooth and
+# starts a oneshot unit that power cycles the adapter a few seconds later.
+# Other Bluetooth devices drop for about 2 seconds when that happens.
+
+set -eu
+
+sudo pacman -S --noconfirm --needed bluez-utils
+
+sudo tee /etc/systemd/system/bluetooth-chip-reset.service >/dev/null <<'UNIT'
+[Unit]
+Description=Reset the Bluetooth chip to drop the link of a departed controller
+
+[Service]
+Type=oneshot
+# Let the kernel finish its failed disconnect first.
+ExecStartPre=/usr/bin/sleep 5
+# Skip the reset when a controller is already back, so it is not dropped.
+ExecStart=/bin/sh -c 'ls /sys/bus/hid/devices/ | grep -q "^0005:054C:" && exit 0; bluetoothctl power off && bluetoothctl power on'
+UNIT
+
+# Bus 0005 is Bluetooth and vendor 054C is Sony.
+sudo tee /etc/udev/rules.d/90-bluetooth-chip-reset.rules >/dev/null <<'RULES'
+ACTION=="remove", SUBSYSTEM=="hid", ENV{HID_ID}=="0005:0000054C:*", RUN+="/usr/bin/systemctl --no-block start bluetooth-chip-reset.service"
+RULES
+
+sudo systemctl daemon-reload
+sudo udevadm control --reload
