@@ -12,24 +12,12 @@
 
 set -eu
 
+DOTFILES_DIRECTORY="$(git rev-parse --show-toplevel)"
+
 sudo pacman -S --noconfirm --needed bluez-utils
 
-sudo tee /etc/systemd/system/bluetooth-chip-reset.service >/dev/null <<'UNIT'
-[Unit]
-Description=Reset the Bluetooth chip to drop the link of a departed controller
-
-[Service]
-Type=oneshot
-# Let the kernel finish its failed disconnect first.
-ExecStartPre=/usr/bin/sleep 5
-# Skip the reset when a controller is already back, so it is not dropped.
-ExecStart=/bin/sh -c 'ls /sys/bus/hid/devices/ | grep -q "^0005:054C:" && exit 0; bluetoothctl power off && bluetoothctl power on'
-UNIT
-
-# Bus 0005 is Bluetooth and vendor 054C is Sony.
-sudo tee /etc/udev/rules.d/90-bluetooth-chip-reset.rules >/dev/null <<'RULES'
-ACTION=="remove", SUBSYSTEM=="hid", ENV{HID_ID}=="0005:0000054C:*", RUN+="/usr/bin/systemctl --no-block start bluetooth-chip-reset.service"
-RULES
+sudo install -D -m 644 "${DOTFILES_DIRECTORY}/arch/etc/systemd/system/bluetooth-chip-reset.service" /etc/systemd/system/bluetooth-chip-reset.service
+sudo install -D -m 644 "${DOTFILES_DIRECTORY}/arch/etc/udev/rules.d/90-bluetooth-chip-reset.rules" /etc/udev/rules.d/90-bluetooth-chip-reset.rules
 
 sudo systemctl daemon-reload
 sudo udevadm control --reload

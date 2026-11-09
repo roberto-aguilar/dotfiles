@@ -1,0 +1,12 @@
+# The onboard RTL8821CE keeps a dead link for 7 to 10 minutes after every
+# failed HCI Disconnect. Bluetooth power off and on sends an HCI Reset,
+# which drops it at once. Started by 90-bluetooth-chip-reset.rules.
+[Unit]
+Description=Reset the Bluetooth chip to drop the link of a departed controller
+
+[Service]
+Type=oneshot
+# Let the kernel finish its failed disconnect first.
+ExecStartPre=/usr/bin/sleep 5
+# Skip the reset when a controller is already back, so it is not dropped.
+ExecStart=/bin/sh -c 'ls /sys/bus/hid/devices/ | grep -q "^0005:054C:" && exit 0; bluetoothctl power off && bluetoothctl power on'

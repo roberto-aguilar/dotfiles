@@ -1,0 +1,3 @@
+# Reset the Bluetooth chip when a PlayStation controller leaves, so it can
+# reconnect right away. Bus 0005 is Bluetooth and vendor 054C is Sony.
+ACTION=="remove", SUBSYSTEM=="hid", ENV{HID_ID}=="0005:0000054C:*", RUN+="/usr/bin/systemctl --no-block start bluetooth-chip-reset.service"
