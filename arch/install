@@ -129,6 +129,10 @@ grep -qF 'require("hypr.dotfiles")' "${HYPRLAND_LUA}" 2>/dev/null || cat >>"${HY
 require("hypr.dotfiles")
 LUA
 
+# Replace the bar's workspaces widget with a clone that always shows all ten.
+stow --no-folding -d "${DOTFILES_DIRECTORY}/arch" -t "${HOME}" omarchy
+omarchy-shell shell rescanPlugins >/dev/null 2>&1 || true
+omarchy plugin enable roberto.workspaces
 
 # Apply Bluetooth audio fixes for the onboard WiFi/BT card.
 "${DOTFILES_DIRECTORY}/arch/bluetooth-audio-rtl8821ce"
